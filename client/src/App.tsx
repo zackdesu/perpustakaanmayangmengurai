@@ -1,9 +1,13 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Home from "./pages/home";
-import Error from "./pages/error";
 import { Loader2 } from "lucide-react";
 import Search from "./pages/search";
+import BookInformation from "./pages/bookInformation";
 const Layout = lazy(() => import("./pages/layout"));
 const Pustakawan = lazy(() => import("./pages/pustakawan"));
 const Areaanggota = lazy(() => import("./pages/areaanggota"));
@@ -45,15 +49,25 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+
       {
         path: "search",
         element: <Search />,
+      },
+      {
+        path: "book",
+        element: <Navigate to="/" replace />,
+      },
+
+      {
+        path: "book/:bookId",
+        element: <BookInformation />,
       },
     ],
   },
   {
     path: "*",
-    element: <Error />,
+    element: <Navigate to="/" replace />,
   },
 ]);
 
