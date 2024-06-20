@@ -4,8 +4,12 @@ const Main = () => {
   return (
     <div className="w-full">
       <img
-        src="/library.jpg"
-        className="aspect-[3/1] md:aspect-[6/1] w-full object-cover"
+        src="/library (1200x200).jpg"
+        className="aspect-[3/1] md:hidden w-full object-cover"
+      />
+      <img
+        src="/library (2400x400).jpg"
+        className="max-md:hidden aspect-[6/1] w-full object-cover"
       />
       <SearchBar className="-top-6" />
     </div>
