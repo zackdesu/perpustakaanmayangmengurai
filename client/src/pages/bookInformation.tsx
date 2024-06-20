@@ -43,7 +43,7 @@ const BookInformation = () => {
         <>
           <div className="p-8 md:p-16 bg-gray-100 rounded-sm justify-self-center md:justify-self-end">
             <img
-              src={"/" + book.image}
+              src={book.image}
               className="rounded-sm border-white border max-md:max-h-[320px]"
             />
           </div>
