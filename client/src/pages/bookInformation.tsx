@@ -2,7 +2,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Navigate, useParams } from "react-router-dom";
 import getBooks from "@/__fakeapi__/api";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const BookInformation = () => {
