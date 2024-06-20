@@ -25,7 +25,7 @@ const BookList = ({
           className={`flex flex-col items-center p-1 ${list && "aspect-[2/3]"}`}
         >
           <img
-            src={`/${image}`}
+            src={image}
             className={`mb-3 saturate-[.7] group-hover:saturate-100 ${
               !list ? "max-h-[120px] md:max-h-[190px]" : "h-full"
             } rounded`}

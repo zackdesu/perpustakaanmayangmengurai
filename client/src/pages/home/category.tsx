@@ -4,24 +4,24 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 const Category = () => {
   const categoryData = [
     {
-      icons: "books.png",
+      icons: "/assets/category/books.png",
       desc: "Literatur",
     },
     {
-      icons: "chemical.png",
+      icons: "/assets/category/chemical.png",
       desc: "Komputer & Program",
     },
-    { icons: "memory.png", desc: "Psikologi & Filosofi" },
+    { icons: "/assets/category/memory.png", desc: "Psikologi & Filosofi" },
     {
-      icons: "quill.png",
+      icons: "/assets/category/quill.png",
       desc: "Karya Seni & Hiburan",
     },
     {
-      icons: "translation.png",
+      icons: "/assets/category/translation.png",
       desc: "Bahasa",
     },
-    { icons: "returntothepast.png", desc: "Sejarah" },
-    { icons: "math.png", desc: "Matematika & Sains" },
+    { icons: "/assets/category/returntothepast.png", desc: "Sejarah" },
+    { icons: "/assets/category/math.png", desc: "Matematika & Sains" },
   ];
   return (
     <section>

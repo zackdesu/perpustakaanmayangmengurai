@@ -13,7 +13,7 @@ const CardCategory = ({
     <Card className={"group cursor-pointer w-[96px] md:w-[148px] " + className}>
       <CardHeader className="flex flex-col items-center">
         <img
-          src={`/${icons}`}
+          src={icons}
           className="mb-3 saturate-[.7] group-hover:saturate-100 lg:min-w-[75px]"
         />
         <CardDescription className="text-center group-hover:text-zinc-800">

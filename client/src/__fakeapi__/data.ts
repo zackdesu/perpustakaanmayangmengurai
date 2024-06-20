@@ -1,7 +1,7 @@
 const bookDatas: BookDatas[] = [
   {
     id: 1,
-    image: "bumi.jpg",
+    image: "/assets/books/bumi.jpg",
     name: "Bumi",
     author: "Tere Liye",
     stock: 0,
@@ -10,7 +10,7 @@ const bookDatas: BookDatas[] = [
   },
   {
     id: 2,
-    image: "bulan.jpg",
+    image: "/assets/books/bulan.jpg",
     name: "Bulan",
     author: "Tere Liye",
     stock: 0,
@@ -19,7 +19,7 @@ const bookDatas: BookDatas[] = [
   },
   {
     id: 3,
-    image: "bintang.jpg",
+    image: "/assets/books/bintang.jpg",
     name: "Bintang",
     author: "Tere Liye",
     stock: 0,
@@ -28,7 +28,7 @@ const bookDatas: BookDatas[] = [
   },
   {
     id: 4,
-    image: "Gagal-Menjadi-Manusia.jpg",
+    image: "/assets/books/Gagal-Menjadi-Manusia.jpg",
     name: "Gagal Menjadi Manusia",
     author: "Dazai Osamu",
     desc: `Gagal Menjadi Manusia adalah sebuah novel karangan Osamu Dazai yang menjadi novel terbaik kedua di Jepang setelah Kokoro karya Natsume Soseki. Arti dari judulnya kerap dibahas oleh Donald Keene dalam kata pengantar untuk terjemahan bahasa Inggris, seperti "Didiskualifikasi Menjadi Manusia".`,
