@@ -1,56 +1,19 @@
+import getBooks from "@/__fakeapi__/api";
 import BookList from "@/components/bookList";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 
-type BookDatas = {
-  image: string;
-  name: string;
-};
-
 const Popular = () => {
-  const [bookDatas, setBookDatas] = useState<BookDatas[] | never>([]);
+  const [bookData, setBookData] = useState<BookDatas[] | never>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const bookData = [
-      {
-        image: "bumi.jpg",
-        name: "Bumi",
-      },
-      {
-        image: "bulan.jpg",
-        name: "Bulan",
-      },
-      { image: "bintang.jpg", name: "Bintang" },
-      { image: "Gagal-Menjadi-Manusia.jpg", name: "Gagal Menjadi Manusia" },
-      {
-        image: "bumi.jpg",
-        name: "Bumi",
-      },
-      {
-        image: "bulan.jpg",
-        name: "Bulan",
-      },
-      { image: "bintang.jpg", name: "Bintang" },
-      { image: "Gagal-Menjadi-Manusia.jpg", name: "Gagal Menjadi Manusia" },
-      {
-        image: "bumi.jpg",
-        name: "Bumi",
-      },
-      {
-        image: "bulan.jpg",
-        name: "Bulan",
-      },
-      { image: "bintang.jpg", name: "Bintang" },
-    ];
-
-    const timer = setTimeout(() => {
-      setBookDatas(bookData);
+    void (async () => {
+      const data = await getBooks();
+      setBookData(data);
       setLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
+    })();
   }, []);
 
   return (
@@ -66,12 +29,13 @@ const Popular = () => {
                   className="w-[96px] h-[158px] md:w-[146px] md:h-[234px] mx-2 mb-5"
                 />
               ))
-            : bookDatas.map((e, i) => (
+            : bookData.map((e, i) => (
                 <BookList
                   image={e.image}
                   name={e.name}
                   className="mx-2"
                   key={i}
+                  link={`/book/${e.id}`}
                 />
               ))}
         </section>
