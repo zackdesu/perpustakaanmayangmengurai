@@ -20,7 +20,7 @@ const Popular = () => {
     <section>
       <h3 className="mt-10">Buku populer</h3>
       <p className="text-zinc-500">Buku yang paling sering dibaca</p>
-      <ScrollArea className="mt-5 h-full">
+      <ScrollArea className="mt-5 h-full pb-3">
         <section className="flex h-full">
           {loading
             ? Array.from({ length: 6 }).map((_, index) => (
