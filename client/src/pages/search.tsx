@@ -22,7 +22,7 @@ const Search = () => {
     <div>
       <SearchBar value={searchInput ? searchInput : undefined} />
       <p className="mt-5 mb-2">Hasil dari pencarian {searchInput}</p>
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] md:grid-cols-4 lg:grid-cols-6 xl:lg:grid-cols-7 2xl:grid-cols-8 gap-2">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] min-[388px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:lg:grid-cols-7 2xl:grid-cols-8 gap-2">
         {loading ? (
           <Loader2 className="h-4 mx-auto self-center col-span-full animate-spin" />
         ) : (
@@ -32,6 +32,7 @@ const Search = () => {
                 i.includes(searchInput ? searchInput.toLowerCase() : "")
               )
             )
+            .sort((a, b) => a.name.localeCompare(b.name))
             .map((e, i) => (
               <BookList
                 list
