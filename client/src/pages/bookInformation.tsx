@@ -11,7 +11,6 @@ const BookInformation = () => {
   useEffect(() => {
     void (async () => {
       const data = await getBooks();
-      console.log(data);
       setBookData(data);
       setLoading(false);
     })();
