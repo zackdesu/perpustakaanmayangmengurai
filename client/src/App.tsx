@@ -8,6 +8,7 @@ import Home from "./pages/home";
 import { Loader2 } from "lucide-react";
 import Search from "./pages/search";
 import BookInformation from "./pages/bookInformation";
+import BookTypes from "./pages/bookTypes";
 const Layout = lazy(() => import("./pages/layout"));
 const Pustakawan = lazy(() => import("./pages/pustakawan"));
 const Areaanggota = lazy(() => import("./pages/areaanggota"));
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "book/:bookId",
         element: <BookInformation />,
+      },
+      {
+        path: "types/:bookTypes",
+        element: <BookTypes />,
       },
     ],
   },
