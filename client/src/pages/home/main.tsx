@@ -4,7 +4,7 @@ const Main = () => {
   return (
     <div className="w-full">
       <img
-        src="/assets/library (1200x200).jpg"
+        src="/assets/library (1200x400).jpg"
         className="aspect-[3/1] md:hidden w-full object-cover"
       />
       <img

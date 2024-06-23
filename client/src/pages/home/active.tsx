@@ -25,10 +25,10 @@ const Active = () => {
     const timer = setTimeout(() => {
       setActiveStudents([
         { nama: "Wongso Wijaya", kehadiran: 10 },
+        { nama: "Wengse Wijaya", kehadiran: 19 },
+        { nama: "Wungsu Wijaya", kehadiran: 15 },
         { nama: "Wangsa Wijaya", kehadiran: 17 },
         { nama: "Wingsi Wijaya", kehadiran: 12 },
-        { nama: "Wungsu Wijaya", kehadiran: 15 },
-        { nama: "Wengse Wijaya", kehadiran: 19 },
       ]);
       setLoading(false);
     }, 5000);
@@ -38,7 +38,9 @@ const Active = () => {
   return (
     <section>
       <h3 className="mt-10">Siswa paling aktif</h3>
-      <p className="text-zinc-500">Paling sering mengunjungi perpustakaan</p>
+      <p className="text-zinc-500">
+        Paling sering mengunjungi perpustakaan (top 5)
+      </p>
       <Table>
         <TableCaption>Siswa paling aktif</TableCaption>
         <TableHeader>
@@ -62,7 +64,7 @@ const Active = () => {
                 </TableRow>
               ))
             : activeStudents
-                .sort((e, i) => e.kehadiran + i.kehadiran)
+                .sort((e, i) => i.kehadiran - e.kehadiran)
                 .map((e, i) => (
                   <TableRow key={i}>
                     <TableCell>{i + 1}</TableCell>
