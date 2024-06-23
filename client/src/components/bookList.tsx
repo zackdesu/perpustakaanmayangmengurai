@@ -18,7 +18,7 @@ const BookList = ({
     <Link to={link}>
       <Card
         className={`group cursor-pointer ${
-          !list ? "w-[96px] md:w-[148px]" : "aspect-[9/15] max-w-[300px]"
+          !list ? "w-[120px] md:w-[148px]" : "aspect-[9/15] max-w-[300px]"
         } ${className}`}
       >
         <div
@@ -27,7 +27,7 @@ const BookList = ({
           <img
             src={image}
             className={`mb-3 saturate-[.7] group-hover:saturate-100 ${
-              !list ? "max-h-[120px] md:max-h-[190px]" : "h-full"
+              !list ? "max-h-[155px] md:max-h-[190px]" : "h-full"
             } rounded`}
           />
           <CardDescription className="text-center group-hover:text-zinc-800 line-clamp-1 px-1">

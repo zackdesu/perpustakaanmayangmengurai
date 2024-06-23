@@ -26,7 +26,7 @@ const Popular = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="w-[96px] h-[158px] md:w-[146px] md:h-[234px] mx-2 mb-5"
+                  className="w-[120px] h-[197.5px] md:w-[146px] md:h-[234px] mx-2 mb-5"
                 />
               ))
             : bookData.map((e, i) => (
