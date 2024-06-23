@@ -51,15 +51,15 @@ const Pustakawan = () => {
     <>
       <h2 className="font-semibold">Profil Pustakawan</h2>
       <hr className="mx-3 my-8" />
-      <section className="flex flex-wrap justify-center mx-auto">
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] min-[388px]:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-[1375px]:grid-cols-5 gap-8">
         {loading
           ? Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className="w-[233px] h-[379px] mx-2 mb-5" />
+              <Skeleton key={index} className="aspect-[9/10]" />
             ))
           : contacts.map((e, index) => (
               <CardPustakawan
                 key={index}
-                className="mx-2 mb-5"
+                className=""
                 nama={e.nama}
                 title={e.title}
                 email={e.email}

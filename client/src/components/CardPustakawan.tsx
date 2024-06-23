@@ -28,13 +28,20 @@ const CardPustakawan = ({
   phonenumber,
 }: Contact) => {
   return (
-    <Card className={"w-fit grid grid-rows-[1fr_min-content] " + className}>
+    <Card
+      className={"aspect-[9/10] grid grid-rows-[1fr_min-content] " + className}
+    >
       <div className="aspect-square rounded grid bg-neutral-100">
-        <img src="/smkn1dumai.png" className="w-9/12 place-self-center" />
+        <img
+          src="/assets/smkn1dumai.png"
+          className="w-9/12 place-self-center"
+        />
       </div>
       <div>
         <CardHeader>
-          <CardTitle>{nama}</CardTitle>
+          <CardTitle className="line-clamp-1 leading-normal -mb-2">
+            {nama}
+          </CardTitle>
           <CardDescription>{title}</CardDescription>
         </CardHeader>
         <CardFooter>
