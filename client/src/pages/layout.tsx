@@ -7,7 +7,7 @@ const Layout = () => {
     <>
       <Navbar />
       <ScrollRestoration />
-      <section className="py-24 mx-10">
+      <section className="py-24 mx-5 md:mx-10">
         <Outlet />
       </section>
       <Footer />
