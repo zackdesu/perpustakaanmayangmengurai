@@ -15,7 +15,7 @@ const CardCategory = ({
   return (
     <Link
       to={link}
-      className={`${className} w-[96px] md:w-[148px] group cursor-pointer`}
+      className={`${className} w-[120px] md:w-[148px] group cursor-pointer`}
     >
       <Card className="h-full">
         <CardHeader className="flex flex-col items-center">

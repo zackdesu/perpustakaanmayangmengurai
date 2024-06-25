@@ -3,12 +3,12 @@ import { FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-zinc-800 p-5">
-      <div className="flex items-center justify-center text-white">
+    <footer className="w-full bg-green-900 text-yellow-50 p-5">
+      <div className="flex items-center justify-center">
         <TbBooks size={30} className="mr-1 md:mr-3 max-md:w-6 max-md:h-6" />
         <h5 className="max-md:text-sm">Perpustakaan Mayang Mengurai</h5>
       </div>
-      <div className="flex text-white justify-center my-5">
+      <div className="flex justify-center my-5">
         <a
           href="https://instagram.com/perpustakaanmayangmengurai"
           target="_blank"
@@ -16,9 +16,7 @@ const Footer = () => {
           <FaInstagram className="ml-2 cursor-pointer" size={25} />
         </a>
       </div>
-      <p className="w-full text-center text-white">
-        &copy; Wongso Wijaya, 2024
-      </p>
+      <p className="w-full text-center">&copy; Wongso Wijaya, 2024</p>
     </footer>
   );
 };

@@ -8,12 +8,11 @@ const Category = () => {
       <h3>Kategori buku</h3>
       <p className="text-zinc-500">Pilih kategori buku kesukaanmu</p>
       <ScrollArea className="mt-5 h-full pb-3">
-        <section className="flex h-full">
+        <section className="flex h-full gap-5">
           {categoryData.map((e, i) => (
             <CardCategory
               icons={e.icons}
               desc={e.desc}
-              className="mx-2 md:mx-5"
               key={i}
               link={`/types/${e.desc.split(" ").join("-")}`}
             />
