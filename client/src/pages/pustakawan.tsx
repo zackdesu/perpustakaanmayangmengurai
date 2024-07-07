@@ -5,7 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 type Contact = {
   nama: string;
   title: string;
-  email: string;
+  email?: string;
+  facebook?: string;
+  instagram?: string;
+  phonenumber?: string;
 };
 
 const Pustakawan = () => {
@@ -19,11 +22,13 @@ const Pustakawan = () => {
           nama: "Wongso Wijaya",
           title: "Pustakawan",
           email: "zarchxxx@gmail.com",
+          facebook: "ss",
         },
         {
           nama: "Wongso Wijaya",
           title: "Pustakawan",
           email: "zarchxxx@gmail.com",
+          instagram: "wongsowijaya",
         },
         {
           nama: "Wongso Wijaya",
@@ -42,7 +47,7 @@ const Pustakawan = () => {
         },
       ]);
       setLoading(false);
-    }, 5000);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
@@ -63,6 +68,9 @@ const Pustakawan = () => {
                 nama={e.nama}
                 title={e.title}
                 email={e.email}
+                facebook={e.facebook}
+                instagram={e.instagram}
+                phonenumber={e.phonenumber}
               />
             ))}
       </section>

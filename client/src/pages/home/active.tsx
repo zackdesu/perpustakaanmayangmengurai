@@ -44,9 +44,11 @@ const Active = () => {
       <Table>
         <TableCaption>Siswa paling aktif</TableCaption>
         <TableHeader>
-          <TableHead>No</TableHead>
-          <TableHead>Nama Siswa</TableHead>
-          <TableHead>Jumlah Kehadiran</TableHead>
+          <TableRow>
+            <TableHead>No</TableHead>
+            <TableHead>Nama Siswa</TableHead>
+            <TableHead>Jumlah Kehadiran</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody>
           {loading

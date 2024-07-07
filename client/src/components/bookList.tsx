@@ -29,6 +29,11 @@ const BookList = ({
             className={`mb-3 saturate-[.7] group-hover:saturate-100 ${
               !list ? "max-h-[155px] md:max-h-[190px]" : "h-full"
             } rounded`}
+            loading="lazy"
+            alt={name}
+            title={name}
+            decoding="async"
+            fetchPriority="high"
           />
           <CardDescription className="text-center group-hover:text-zinc-800 line-clamp-1 px-1">
             {name}

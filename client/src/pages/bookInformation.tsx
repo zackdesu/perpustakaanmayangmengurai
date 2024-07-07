@@ -40,10 +40,16 @@ const BookInformation = () => {
         <Navigate to="/search" replace />
       ) : (
         <>
-          <div className="p-8 md:p-16 bg-gray-100 rounded-sm justify-self-center md:justify-self-end">
+          <div className="p-8 bg-gray-100 rounded-sm justify-self-center md:justify-self-end">
             <img
               src={book.image}
               className="rounded-sm border-white border max-md:max-h-[320px]"
+              alt={book.name}
+              decoding="async"
+              fetchPriority="high"
+              width={"220px"}
+              height={"320px"}
+              sizes="(min-width: 768px) 480px, 87.5vw"
             />
           </div>
           <div>

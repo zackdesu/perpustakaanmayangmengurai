@@ -6,7 +6,8 @@ import {
   CardDescription,
   CardFooter,
 } from "./ui/card";
-import { MdEmail } from "react-icons/md";
+import { LucideIcon, Mail } from "lucide-react";
+import { IconType } from "react-icons";
 
 type Contact = {
   className: string;
@@ -27,6 +28,20 @@ const CardPustakawan = ({
   instagram,
   phonenumber,
 }: Contact) => {
+  const Link = ({
+    href,
+    Icons,
+    className,
+  }: {
+    href: string;
+    Icons: LucideIcon | IconType;
+    className: string;
+  }) => (
+    <a target="_blank" href={href}>
+      <Icons size={24} className={`${className} mr-1 cursor-pointer`} />
+    </a>
+  );
+
   return (
     <Card
       className={"aspect-[9/10] grid grid-rows-[1fr_min-content] " + className}
@@ -46,38 +61,34 @@ const CardPustakawan = ({
         </CardHeader>
         <CardFooter>
           {email && (
-            <a target="_blank" href={`mailto:${email}`}>
-              <MdEmail
-                size={24}
-                className="hover:text-blue-400 mr-1 cursor-pointer"
-              />
-            </a>
+            <Link
+              href={`mailto:${email}`}
+              Icons={Mail}
+              className="hover:text-blue-400"
+            />
           )}
 
           {facebook && (
-            <a target="_blank" href={`https://facebook.com/${facebook}`}>
-              <FaFacebook
-                className="hover:text-blue-700 mx-1 cursor-pointer"
-                size={24}
-              />
-            </a>
+            <Link
+              href={`https://facebook.com/${facebook}`}
+              Icons={FaFacebook}
+              className="hover:text-blue-700"
+            />
           )}
           {instagram && (
-            <a target="_blank" href={`https://instagram.com/${instagram}`}>
-              <FaInstagram
-                className="hover:text-pink-600 mx-1 cursor-pointer"
-                size={24}
-              />
-            </a>
+            <Link
+              href={`https://instagram.com/${instagram}`}
+              Icons={FaInstagram}
+              className="hover:text-pink-600"
+            />
           )}
 
           {phonenumber && (
-            <a target="_blank" href={`https://wa.me/${phonenumber}`}>
-              <FaWhatsapp
-                size={24}
-                className="hover:text-green-500 rounded mx-1 cursor-pointer"
-              />
-            </a>
+            <Link
+              href={`https://wa.me/${phonenumber}`}
+              Icons={FaWhatsapp}
+              className="hover:text-green-500"
+            />
           )}
         </CardFooter>
       </div>

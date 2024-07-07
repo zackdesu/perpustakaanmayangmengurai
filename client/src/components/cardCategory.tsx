@@ -22,9 +22,13 @@ const CardCategory = ({
           <img
             src={icons}
             className="mb-3 saturate-[.7] group-hover:saturate-100 lg:min-w-[75px]"
+            alt={desc}
+            title={desc}
+            decoding="async"
+            fetchPriority="high"
           />
-          <CardDescription className="text-center group-hover:text-zinc-800">
-            <p className="max-sm:line-clamp-1">{desc}</p>
+          <CardDescription className="text-center group-hover:text-zinc-800 max-sm:line-clamp-1">
+            {desc}
           </CardDescription>
         </CardHeader>
       </Card>
