@@ -32,12 +32,14 @@ const CardPustakawan = ({
     href,
     Icons,
     className,
+    label,
   }: {
     href: string;
     Icons: LucideIcon | IconType;
     className: string;
+    label: string;
   }) => (
-    <a target="_blank" href={href}>
+    <a target="_blank" href={href} aria-label={label}>
       <Icons size={24} className={`${className} mr-1 cursor-pointer`} />
     </a>
   );
@@ -50,6 +52,9 @@ const CardPustakawan = ({
         <img
           src="/assets/smkn1dumai.png"
           className="w-9/12 place-self-center"
+          alt={nama}
+          loading="lazy"
+          decoding="async"
         />
       </div>
       <div>
@@ -65,6 +70,7 @@ const CardPustakawan = ({
               href={`mailto:${email}`}
               Icons={Mail}
               className="hover:text-blue-400"
+              label="email"
             />
           )}
 
@@ -73,6 +79,7 @@ const CardPustakawan = ({
               href={`https://facebook.com/${facebook}`}
               Icons={FaFacebook}
               className="hover:text-blue-700"
+              label="facebook"
             />
           )}
           {instagram && (
@@ -80,6 +87,7 @@ const CardPustakawan = ({
               href={`https://instagram.com/${instagram}`}
               Icons={FaInstagram}
               className="hover:text-pink-600"
+              label="instagram"
             />
           )}
 
@@ -88,6 +96,7 @@ const CardPustakawan = ({
               href={`https://wa.me/${phonenumber}`}
               Icons={FaWhatsapp}
               className="hover:text-green-500"
+              label="whatsapp"
             />
           )}
         </CardFooter>

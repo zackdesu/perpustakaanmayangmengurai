@@ -4,16 +4,10 @@ import BookList from "@/components/bookList";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { IoWarningOutline } from "react-icons/io5";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const BookTypes = () => {
   const { bookTypes } = useParams();
-  const category = categoryData.find(
-    (e) => e.desc.split(" ").join("-") === bookTypes
-  );
-  if (!category || !bookTypes) return;
-  const title = bookTypes.split("-").join(" ") || "";
-
   const [bookData, setBookData] = useState<BookDatas[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -23,6 +17,12 @@ const BookTypes = () => {
       setLoading(false);
     })();
   }, []);
+  const category = categoryData.find(
+    (e) => e.desc.split(" ").join("-") === bookTypes
+  );
+  if (!category || !bookTypes) return <Navigate to="/" />;
+  const title = bookTypes.split("-").join(" ") || "";
+
   const filteredBooks = bookData.filter((e) => e.type === title);
   return (
     <section>

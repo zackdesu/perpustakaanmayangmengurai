@@ -27,7 +27,7 @@ const SearchBar = ({
         ref={searchInput}
         defaultValue={value}
       />
-      <Button type="submit" className="absolute right-0">
+      <Button type="submit" className="absolute right-0" aria-label="search">
         <FaSearch />
       </Button>
     </form>

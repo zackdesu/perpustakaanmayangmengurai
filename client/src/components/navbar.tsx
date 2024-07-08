@@ -51,7 +51,11 @@ const Navbar = () => {
           <Link to={"/areaanggota"}>Area Anggota</Link>
         </li>
       </ul>
-      <Button className="sm:hidden" onClick={() => setOpen(!open)}>
+      <Button
+        className="sm:hidden"
+        onClick={() => setOpen(!open)}
+        aria-label="menu"
+      >
         {open ? <IoMdClose size={20} /> : <FiMenu size={20} />}
       </Button>
     </nav>

@@ -31,7 +31,7 @@ const BookList = ({
             } rounded`}
             loading="lazy"
             alt={name}
-            title={name}
+            title={`Buku ${name}`}
             decoding="async"
             fetchPriority="high"
           />

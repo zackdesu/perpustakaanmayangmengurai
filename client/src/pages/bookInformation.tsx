@@ -60,6 +60,7 @@ const BookInformation = () => {
                 .join("+")}%2C+penulis+buku+${book.name.split(" ").join("+")}`}
               target="_blank"
               className="text-blue-500 underline"
+              aria-label="Book's author"
             >
               {book.author}
             </a>

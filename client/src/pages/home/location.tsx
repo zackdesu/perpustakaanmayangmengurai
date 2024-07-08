@@ -7,6 +7,7 @@ const Location = () => {
         height="300"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
+        title="Perpustakaan Mayang Mengurai Location"
       />
       <p>Perpustakaan Mayang Mengurai SMKN 1 Dumai</p>
     </div>

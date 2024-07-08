@@ -90,7 +90,12 @@ const Areaanggota = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-[85px]" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-[85px]"
+            disabled={loading}
+            aria-label="Submit"
+          >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit"}
           </Button>
         </form>

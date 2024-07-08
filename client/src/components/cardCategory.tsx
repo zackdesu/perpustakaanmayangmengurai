@@ -22,7 +22,7 @@ const CardCategory = ({
           <img
             src={icons}
             className="mb-3 saturate-[.7] group-hover:saturate-100 lg:min-w-[75px]"
-            alt={desc}
+            alt={desc.toLowerCase()}
             title={desc}
             decoding="async"
             fetchPriority="high"
