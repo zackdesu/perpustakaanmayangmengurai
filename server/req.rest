@@ -1,0 +1,24 @@
+POST http://localhost:3000/acc
+Content-Type: application/json
+
+{
+    "username": "zackdesu",
+    "name": "Wongso",
+    "email": "",
+    "password": "anjayalok"
+}
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "zackdesu",
+    "password": "anjayalok"
+}
+
+###
+
+GET http://localhost:3000/acc
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU4YThiMzkxLTczNTgtNDNkMy04YjdhLWMwNzFmNDhlMjczZiIsInVzZXJuYW1lIjoiemFja2Rlc3UiLCJuYW1lIjoiV29uZ3NvIiwiZW1haWwiOm51bGwsImlhdCI6MTcyNTA4NjIzOSwiZXhwIjoxNzI1MDg5ODM5fQ.W-KZdYwPmxStkCQq1QzHOeoF1ovW1_U7w9bz02jakWo
