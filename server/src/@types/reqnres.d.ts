@@ -8,5 +8,5 @@ interface Request extends express.Request {
   };
 }
 
-// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Response extends express.Response {}

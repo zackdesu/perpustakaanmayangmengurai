@@ -1,10 +1,11 @@
 import { NextFunction } from "express";
 import { Request, Response } from "../@types/reqnres";
 const errorHandler = (
-  err: any,
+  err: {statusCode: number, message: string},
   req: Request,
   res: Response,
-  _next: NextFunction // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: NextFunction
 ) => {
   const statusCode = err.statusCode || 500;
 
