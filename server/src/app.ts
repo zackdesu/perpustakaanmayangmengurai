@@ -1,11 +1,9 @@
 import express from "express";
 import { router as acc } from "./route/account";
-import { router as book } from "./route/book";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import errorHandler from "./middleware/errorHandler";
 
 const app = express();
 const origin = process.env.ORIGIN;
@@ -36,7 +34,5 @@ app.use(
 app.use(express.json());
 
 app.use("/auth", acc);
-app.use("/book", book);
 
-app.use(errorHandler);
 export default app;
