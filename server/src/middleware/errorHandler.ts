@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 const errorHandler = (
-  err: { statusCode: number; message: string },
+  err: { statusCode: number; message?: string },
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -8,7 +8,10 @@ const errorHandler = (
 ) => {
   const statusCode = err.statusCode || 500;
 
-  const message = err.message || "Terjadi kesalahan di server";
+  const message =
+    process.env.NODE_ENV === "development"
+      ? err.message
+      : "Internal Server Error!";
 
   res.status(statusCode).json({
     error: message,
