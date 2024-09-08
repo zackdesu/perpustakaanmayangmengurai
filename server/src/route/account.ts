@@ -8,7 +8,6 @@ import {
   refresh,
   update,
 } from "../controller/account";
-import errorHandler from "../middleware/errorHandler";
 
 const router = Router();
 
@@ -19,6 +18,5 @@ router.post("/login", login);
 router.post("/refresh", refresh);
 router.patch("/update", update);
 router.delete("/logout", logout);
-router.use(errorHandler);
 
 export { router };
