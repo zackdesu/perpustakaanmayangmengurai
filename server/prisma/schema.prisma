@@ -25,11 +25,17 @@ model User {
 
 model Book {
   id String @id @unique @default(uuid())
-  name String
-  author String
+  Judul String
+  pengarang String
+  penerbit String?
+  tahun String?
+  website String?
+  email String?
+  image String?
   stock Int @default(0)
   tag String?
   type String
+  isbn String?
   addedBy User @relation(fields: [id], references: [id])
 }
 
