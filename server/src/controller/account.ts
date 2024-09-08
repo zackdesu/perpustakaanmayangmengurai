@@ -88,17 +88,16 @@ export const read = async (
   next: NextFunction
 ) => {
   try {
-    const accessToken =
+    const token =
       req.headers.authorization && req.headers.authorization.split(" ")[1];
 
     const secret = process.env.ACCESS_TOKEN_SECRET;
 
-    if (!accessToken)
-      return throwError(404, "Access Token in cookie not found!");
+    if (!token) return throwError(404, "Access Token in cookie not found!");
 
     if (!secret) return throwError(500, "Access Token Secret not found!");
 
-    const user = jwt.verify(accessToken, secret);
+    const user = jwt.verify(token, secret);
 
     return res.status(200).json(user);
   } catch (error) {
@@ -112,9 +111,9 @@ export const update = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken } = req.cookies;
-    if (!refreshToken)
-      return throwError(404, "Refresh Token in cookie not found!");
+    const token =
+      req.headers.authorization && req.headers.authorization.split(" ")[1];
+    if (!token) return throwError(404, "Refresh Token in cookie not found!");
 
     const secret = process.env.REFRESH_TOKEN_SECRET;
     if (!secret) return throwError(500, "Refresh Token Secret not found!");
@@ -124,7 +123,7 @@ export const update = async (
     if (!name) return throwError(403, "Nama tidak boleh kosong!");
     if (email && !isEmail(email)) return throwError(403, "Email tidak valid!");
 
-    const { id } = jwt.verify(refreshToken, secret) as { id: string };
+    const { id } = jwt.verify(token, secret) as { id: string };
 
     const user = await prisma.user.findFirst({ where: { id } });
     if (!user) return throwError(500, "User not found! Server error!");
