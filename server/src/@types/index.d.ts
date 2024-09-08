@@ -26,8 +26,8 @@ interface GetISBN {
 }
 
 interface Book {
-  id: string;
-  image: string;
+  id: string?;
+  image: string?;
   stock: number;
   tag?: string[];
   type: string;
