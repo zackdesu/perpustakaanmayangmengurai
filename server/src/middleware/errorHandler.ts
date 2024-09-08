@@ -1,7 +1,6 @@
-import { NextFunction } from "express";
-import { Request, Response } from "../@types/reqnres";
+import { Request, Response, NextFunction } from "express";
 const errorHandler = (
-  err: {statusCode: number, message: string},
+  err: { statusCode: number; message: string },
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

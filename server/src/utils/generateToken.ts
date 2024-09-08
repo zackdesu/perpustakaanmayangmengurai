@@ -1,4 +1,4 @@
-import { Response } from "../@types/reqnres";
+import { Response } from "express";
 import jwt from "jsonwebtoken";
 import prisma from "./db";
 
