@@ -113,10 +113,10 @@ export const update = async (
   try {
     const token =
       req.headers.authorization && req.headers.authorization.split(" ")[1];
-    if (!token) return throwError(404, "Refresh Token in cookie not found!");
+    if (!token) return throwError(404, "Access Token in cookie not found!");
 
-    const secret = process.env.REFRESH_TOKEN_SECRET;
-    if (!secret) return throwError(500, "Refresh Token Secret not found!");
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    if (!secret) return throwError(500, "Access Token Secret not found!");
 
     const { name, email, oldPassword, newPassword } = req.body;
 
