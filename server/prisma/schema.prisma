@@ -19,13 +19,12 @@ model User {
   name String
   password String
   email String?
-  booksAdded Book[]
   token Token?
 }
 
 model Book {
   id String @id @unique @default(uuid())
-  Judul String
+  judul String
   pengarang String
   penerbit String?
   tahun String?
@@ -36,7 +35,6 @@ model Book {
   tag String?
   type String
   isbn String?
-  addedBy User @relation(fields: [id], references: [id])
 }
 
 model Token {
