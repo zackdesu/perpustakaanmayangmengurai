@@ -24,13 +24,13 @@ const getISBN = async (ISBN: string) => {
   if (!pengarang) return throwError(404, "Pengarang tidak ditemukan!");
   if (!isbn) return throwError(500, "ISBN tidak ditemukan!");
 
-  const pengarangAsli = pengarang.split(";")[0];
+  const pengarangAsli = pengarang.split(";")[0].split(".")[0];
 
   return {
     judul,
     isbn: isbn.split(" ")[0],
     pengarang: pengarangAsli.startsWith("penulis")
-      ? pengarangAsli.split(";")[1].trim()
+      ? pengarangAsli.split(",")[1].trim()
       : pengarangAsli.trim(),
     penerbit,
     tahun,
