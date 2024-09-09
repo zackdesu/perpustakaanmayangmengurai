@@ -29,8 +29,10 @@ export const createBook = async (
     ];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...data } = req.body;
-
-    const isbn = data.isbn;
+    const isbn = data.isbn
+      ?.split("-")
+      .join("")
+      .replace(/(.{1,3})(.{1,3})(.{1,3})(.{1,3})(.{1,1})/, "$1-$2-$3-$4-$5");
 
     const findISBN = await prisma.book.findFirst({
       where: { isbn },
@@ -123,12 +125,34 @@ export const findByTag = async (
 ) => {
   try {
     const { tag } = req.query;
+    console.log(tag);
     if (typeof tag !== "string") return throwError(500, "Tag harus string!");
     const book = await prisma.book.findMany({
-      where: { OR: [{ judul: { contains: tag }, tag: { contains: tag } }] },
+      where: { OR: [{ judul: { contains: tag } }, { tag: { contains: tag } }] },
     });
 
     return res.json(book);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const book = await prisma.book.findFirst({ where: { id } });
+
+    if (!book) return throwError(404, "Buku tidak ditemukan!");
+
+    await prisma.book.delete({ where: book });
+
+    return res.status(200).json({
+      message: "Buku berhasil di hapus!",
+    });
   } catch (error) {
     next(error);
   }
