@@ -1,3 +1,4 @@
+import { Book } from "@prisma/client";
 import { throwError } from "./throwError";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
