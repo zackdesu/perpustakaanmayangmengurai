@@ -1,11 +1,16 @@
-interface User {
-  username?: string;
+interface Acc {
+  id?: string;
   name?: string;
-  email?: string;
+  username?: string;
   password?: string;
+  email?: string | null;
   newPassword?: string;
   oldPassword?: string;
   otp?: number;
+  absentnum?: string;
+  angkatan?: string;
+  jurusan?: "AKL" | "PN" | "MPLB" | "TKJ" | "BSN" | "KUL" | "ULP";
+  kelas?: string;
 }
 
 interface Payload {
@@ -13,6 +18,7 @@ interface Payload {
   username: string;
   name: string;
   email?: string | null;
+  role: "ADMIN" | "MEMBER";
 }
 
 interface GetISBN {
@@ -26,16 +32,16 @@ interface GetISBN {
 }
 
 interface Book {
-  id: string?;
-  image: string?;
-  stock: number;
-  tag?: string[];
-  type: string;
-  judul: string?;
-  penerbit: string?;
-  pengarang: string?;
-  tahun: string?;
-  isbn: string?;
-  website: string?;
-  email: string?;
+  id?: string;
+  judul?: string;
+  pengarang?: string;
+  penerbit?: string | null;
+  tahun?: string | null;
+  website?: string | null;
+  email?: string | null;
+  image?: string | null;
+  stock?: number;
+  tag?: string | null;
+  type?: $Enums.BookType;
+  isbn?: string | null;
 }
