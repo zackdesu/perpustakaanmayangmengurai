@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { compareSync, hash } from "bcryptjs";
 import { isEmpty, isEmail } from "validator";
 import prisma from "../utils/db";
@@ -10,14 +10,7 @@ import {
 import { throwError } from "../utils/throwError";
 import sendEmail from "../utils/sendEmail";
 import generateOTP from "../utils/generateOTP";
-
-interface IRequest extends Request {
-  body: User;
-  cookies: {
-    accessToken: string;
-    refreshToken: string;
-  };
-}
+import { IRequest } from "../@types/express";
 
 export const create = async (
   req: IRequest,
@@ -25,7 +18,17 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const { username, name, email, password, otp } = req.body;
+    const {
+      username,
+      name,
+      email,
+      password,
+      otp,
+      absentnum,
+      angkatan,
+      jurusan,
+      kelas,
+    } = req.body;
 
     if (!username || isEmpty(username))
       return throwError(404, "Username harus di isi!");
@@ -38,10 +41,24 @@ export const create = async (
 
     if (email && !isEmail(email)) return throwError(403, "Email tidak valid!");
     if (username.length <= 3)
-      return throwError(403, "username harus lebih dari 3 karakter!");
+      return throwError(403, "Username harus lebih dari 3 karakter!");
+    if (!absentnum) return throwError(403, "Nomor Absen wajib di isi!");
+    if (!angkatan) return throwError(403, "Angkatan wajib di isi!");
+    if (!jurusan) return throwError(403, "Jurusan wajib di isi!");
+    if (!kelas) return throwError(403, "Kelas wajib di isi!");
+
+    const codeJurusan = {
+      AKL: "2",
+      PN: "3",
+      MPLB: "4",
+      TKJ: "5",
+      BSN: "6",
+      KUL: "7",
+      ULP: "8",
+    };
 
     const hashedPassword = await hash(password, 10);
-    const usernameExists = await prisma.user.findFirst({ where: { username } });
+    const usernameExists = await prisma.acc.findFirst({ where: { username } });
 
     if (usernameExists)
       return throwError(
@@ -59,12 +76,37 @@ export const create = async (
       await prisma.oTP.delete({ where: { id: findOTP.id } });
     }
 
-    const createAcc = await prisma.user.create({
+    // YYYYJKAAA
+    // YYYY = Tahun Masuk Siswa
+    // J = Inisial Nomor Jurusan
+    // K = Kelas
+    // AAA = Nomor Absen Kelas
+
+    const id =
+      new Date().getFullYear() +
+      codeJurusan[jurusan] +
+      kelas +
+      absentnum.padStart(3, "0");
+
+    console.log(id);
+    if (id.length !== 9) return throwError(500, "Panjang ID bukan 9!");
+    const createAcc = await prisma.acc.create({
       data: {
+        id,
         username,
         name,
         password: hashedPassword,
         email: email ? email.trim() : null,
+      },
+    });
+
+    await prisma.user.create({
+      data: {
+        accId: createAcc.id,
+        angkatan: parseInt(angkatan),
+        kelas: parseInt(kelas),
+        jurusan,
+        absentnum: parseInt(absentnum),
       },
     });
 
@@ -73,7 +115,6 @@ export const create = async (
       user: {
         id: createAcc.id,
         username: createAcc.username,
-        name: createAcc.name,
         email: createAcc.email,
       },
     });
@@ -88,18 +129,8 @@ export const read = async (
   next: NextFunction
 ) => {
   try {
-    const token =
-      req.headers.authorization && req.headers.authorization.split(" ")[1];
-
-    const secret = process.env.ACCESS_TOKEN_SECRET;
-
-    if (!token) return throwError(404, "Access Token in cookie not found!");
-
-    if (!secret) return throwError(500, "Access Token Secret not found!");
-
-    const user = jwt.verify(token, secret);
-
-    return res.status(200).json(user);
+    if (!req.payload) return throwError(500, "req.payload undefined!");
+    return res.status(200).json({ user: req.payload });
   } catch (error) {
     next(error);
   }
@@ -111,21 +142,15 @@ export const update = async (
   next: NextFunction
 ) => {
   try {
-    const token =
-      req.headers.authorization && req.headers.authorization.split(" ")[1];
-    if (!token) return throwError(404, "Access Token in cookie not found!");
-
-    const secret = process.env.ACCESS_TOKEN_SECRET;
-    if (!secret) return throwError(500, "Access Token Secret not found!");
-
+    if (!req.payload) return throwError(500, "req.payload undefined!");
     const { name, email, oldPassword, newPassword } = req.body;
 
     if (!name) return throwError(403, "Nama tidak boleh kosong!");
     if (email && !isEmail(email)) return throwError(403, "Email tidak valid!");
 
-    const { id } = jwt.verify(token, secret) as { id: string };
+    const { id } = req.payload;
 
-    const user = await prisma.user.findFirst({ where: { id } });
+    const user = await prisma.acc.findFirst({ where: { id } });
     if (!user) return throwError(500, "User not found! Server error!");
 
     let password;
@@ -141,9 +166,10 @@ export const update = async (
       username: user.username,
       name,
       email,
+      role: user.role,
     };
 
-    await prisma.user.update({
+    await prisma.acc.update({
       where: { id },
       data: { name: name, email, password },
     });
@@ -177,7 +203,7 @@ export const OTP = async (req: IRequest, res: Response, next: NextFunction) => {
     if (userOTP)
       return throwError(403, "Kamu sudah mengirimkan OTP sebelumnya!");
 
-    await sendEmail(trimmedEmail, otp).catch(console.error);
+    await sendEmail(trimmedEmail, otp, "Verifikasi emailmu sekarang!");
     await prisma.oTP.create({
       data: {
         email: trimmedEmail,
@@ -205,7 +231,7 @@ export const login = async (
     if (!username || !password)
       return throwError(403, "Username atau password belum di isi!");
 
-    const user = await prisma.user.findFirst({ where: { username } });
+    const user = await prisma.acc.findFirst({ where: { username } });
 
     if (!user) return throwError(404, "Pengguna tidak ditemukan!");
 
@@ -218,6 +244,7 @@ export const login = async (
       username: user.username,
       name: user.name,
       email: user.email,
+      role: user.role,
     };
 
     const accessToken = generateAccessToken(res, payload);
@@ -255,7 +282,7 @@ export const refresh = async (
       id: string;
     };
 
-    const user = await prisma.user.findFirst({ where: { id } });
+    const user = await prisma.acc.findFirst({ where: { id } });
 
     if (!user) return throwError(500, "User not found in find user!");
 
@@ -269,6 +296,7 @@ export const refresh = async (
       username: user.username,
       name: user.name,
       email: user.email,
+      role: user.role,
     };
 
     const accessToken = generateAccessToken(res, payload);
