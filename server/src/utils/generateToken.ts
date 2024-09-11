@@ -14,12 +14,6 @@ export const generateAccessToken = (res: Response, payload: Payload) => {
     expiresIn: accessTokenExpires,
   });
 
-  res.cookie("accessToken", accessToken, {
-    maxAge: accessTokenExpires,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV != "development",
-  });
-
   return accessToken;
 };
 
@@ -35,7 +29,7 @@ export const generateRefreshToken = async (res: Response, id: string) => {
     maxAge: refreshTokenExpires,
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV != "development",
+    secure: process.env.NODE_ENV !== "development",
     path: "/",
   });
 
