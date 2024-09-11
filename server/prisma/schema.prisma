@@ -13,41 +13,91 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @unique @default(uuid())
-  username String @unique
-  name String
+model Acc {
+  id       String  @id @unique
+  name     String
+  username String  @unique
   password String
-  email String?
-  token Token?
+  email    String?
+  token    Token?
+  role     Role    @default(MEMBER)
+  user     User?
+  loans    Loan[]
+}
+
+model User {
+  id           String    @id @unique @default(uuid())
+  angkatan     Int
+  jurusan      String
+  kelas        Int
+  absentnum    Int
+  NISN         String?
+  NIPD         String?
+  Tempat       String?
+  TanggalLahir DateTime?
+  acc          Acc?      @relation(fields: [accId], references: [id])
+  accId        String?   @unique
+}
+
+model Loan {
+  id                String    @id
+  waktuPeminjaman   DateTime  @default(now())
+  batasPengembalian DateTime
+  waktuKembali      DateTime?
+  dikembalikan      Boolean   @default(false)
+  userId            String    @unique
+  bookId            String    @unique
+
+  user Acc  @relation(fields: [userId], references: [id])
+  book Book @relation(fields: [bookId], references: [id])
+
+  @@index([userId, bookId])
 }
 
 model Book {
-  id String @id @unique @default(uuid())
-  judul String
+  id        String   @id @unique @default(uuid())
+  judul     String
   pengarang String
-  penerbit String?
-  tahun String?
-  website String?
-  email String?
-  image String?
-  stock Int @default(0)
-  tag String?
-  type String
-  isbn String?
+  penerbit  String?
+  tahun     String?
+  website   String?
+  email     String?
+  image     String?
+  stock     Int      @default(0)
+  tag       String?
+  type      BookType
+  isbn      String?
+  loans     Loan[]
 }
 
 model Token {
-  id Int @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   refreshToken String
-  userId String @unique
-  user User @relation(fields: [userId], references: [id])
+  userId       String @unique
+  user         Acc    @relation(fields: [userId], references: [id])
 }
 
 model OTP {
-  id Int @id @default(autoincrement())
-  email String
-  otp Int
+  id        Int      @id @default(autoincrement())
+  email     String
+  otp       Int
   createdAt DateTime @default(now())
   expiresAt DateTime
+}
+
+enum BookType {
+  LITERATUR
+  KOMPUTER
+  PSIKOLOGI
+  FILOSOFI
+  SENI
+  BAHASA
+  SEJARAH
+  MATEMATIKA
+  SAINS
+}
+
+enum Role {
+  ADMIN
+  MEMBER
 }
