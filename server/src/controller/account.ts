@@ -86,7 +86,7 @@ export const create = async (
       new Date().getFullYear() +
       codeJurusan[jurusan] +
       kelas +
-      absentnum.padStart(3, "0");
+      absentnum.toString().padStart(3, "0");
 
     console.log(id);
     if (id.length !== 9) return throwError(500, "Panjang ID bukan 9!");
@@ -103,10 +103,10 @@ export const create = async (
     await prisma.user.create({
       data: {
         accId: createAcc.id,
-        angkatan: parseInt(angkatan),
-        kelas: parseInt(kelas),
+        angkatan,
+        kelas,
         jurusan,
-        absentnum: parseInt(absentnum),
+        absentnum,
       },
     });
 
