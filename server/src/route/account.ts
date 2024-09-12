@@ -8,15 +8,18 @@ import {
   refresh,
   update,
 } from "../controller/account";
+import { authenticate } from "../middleware/authHandler";
 
 const router = Router();
 
-router.get("/details", read);
 router.post("/register", create);
 router.post("/otp", OTP);
 router.post("/login", login);
 router.post("/refresh", refresh);
-router.patch("/update", update);
 router.delete("/logout", logout);
 
-export { router };
+router.use(authenticate);
+router.get("/details", read);
+router.patch("/update", update);
+
+export { router as acc };
