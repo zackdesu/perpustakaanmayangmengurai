@@ -1,6 +1,7 @@
 import express from "express";
-import { router as acc } from "./route/account";
-import { router as book } from "./route/book";
+import { acc } from "./route/account";
+import { book } from "./route/book";
+import { user } from "./route/user";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
@@ -37,6 +38,7 @@ app.use(express.json());
 
 app.use("/auth", acc);
 app.use("/book", book);
+app.use("/user", user);
 
 app.use(errorHandler);
 export default app;
