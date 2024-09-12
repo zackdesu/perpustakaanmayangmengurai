@@ -1,20 +1,15 @@
-import { User } from "@prisma/client";
 import { NextFunction, Response } from "express";
 import prisma from "../utils/db";
 import { throwError } from "../utils/throwError";
 import { IRequest } from "../@types/express";
 
 export const readUser = async (
-  req: IRequest<User>,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     if (!req.payload) return throwError(500, "req.payload undefined!");
-    const { role } = req.payload;
-
-    if (role !== "ADMIN")
-      return throwError(403, "Peminjaman harus di lakukan oleh admin!");
 
     const { id } = req.payload;
 
@@ -29,20 +24,17 @@ export const readUser = async (
 };
 
 export const updateUser = async (
-  req: IRequest<User>,
+  req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const data = req.body;
-
     if (!req.payload) return throwError(500, "req.payload undefined!");
-    const { role } = req.payload;
-
-    if (role !== "ADMIN")
-      return throwError(403, "Peminjaman harus di lakukan oleh admin!");
 
     const { id } = req.payload;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { username, password, email, name, ...data } = req.body;
 
     await prisma.user.update({ where: { id }, data });
 
