@@ -7,10 +7,15 @@ interface Acc {
   newPassword?: string;
   oldPassword?: string;
   otp?: number;
-  absentnum?: string;
-  angkatan?: string;
+  absentnum?: number;
+  angkatan?: number;
   jurusan?: "AKL" | "PN" | "MPLB" | "TKJ" | "BSN" | "KUL" | "ULP";
-  kelas?: string;
+  kelas?: number;
+  NISN?: string | null;
+  NIPD?: string | null;
+  Tempat?: string | null;
+  TanggalLahir?: Date | null;
+  accId?: string | null;
 }
 
 interface Payload {
