@@ -30,7 +30,7 @@ export const generateRefreshToken = async (res: Response, id: string) => {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV !== "development",
-    path: "/",
+    path: "/refresh",
   });
 
   const findToken = await prisma.token.findFirst({ where: { userId: id } });
