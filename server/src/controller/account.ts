@@ -1,6 +1,5 @@
 import { Response, NextFunction } from "express";
 import { compareSync, hash } from "bcryptjs";
-import { isEmpty, isEmail } from "validator";
 import prisma from "../utils/db";
 import jwt from "jsonwebtoken";
 import {
@@ -11,64 +10,38 @@ import { throwError } from "../utils/throwError";
 import sendEmail from "../utils/sendEmail";
 import generateOTP from "../utils/generateOTP";
 import { IRequest } from "../@types/express";
+import generateUserId from "../utils/userIdGenerator";
+import userSchema from "../schema/userSchema";
+import { z } from "zod";
+import updateUserSchema from "../schema/updateUserSchema";
 
 export const create = async (
-  req: IRequest,
+  req: IRequest<ReqAcc>,
   res: Response,
   next: NextFunction
 ) => {
   try {
+    const result = userSchema.safeParse(req.body);
+
+    console.log(result.error);
+
+    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+
     const {
       username,
-      name,
-      email,
       password,
-      otp,
       absentnum,
       angkatan,
       jurusan,
+      name,
+      email,
+      otp,
       kelas,
-    } = req.body;
-
-    if (!username || isEmpty(username))
-      return throwError(404, "Username harus di isi!");
-    if (!name || isEmpty(name)) return throwError(404, "Nama harus di isi!");
-    if (!password || isEmpty(password) || password.length < 6)
-      return throwError(
-        404,
-        "Password harus di isi dan tidak boleh kurang dari 6 karakter!"
-      );
-
-    if (email && !isEmail(email)) return throwError(403, "Email tidak valid!");
-    if (username.length <= 3)
-      return throwError(403, "Username harus lebih dari 3 karakter!");
-    if (!absentnum) return throwError(403, "Nomor Absen wajib di isi!");
-    if (!angkatan) return throwError(403, "Angkatan wajib di isi!");
-    if (!jurusan) return throwError(403, "Jurusan wajib di isi!");
-    if (!kelas) return throwError(403, "Kelas wajib di isi!");
-
-    const codeJurusan = {
-      AKL: "2",
-      PN: "3",
-      MPLB: "4",
-      TKJ: "5",
-      BSN: "6",
-      KUL: "7",
-      ULP: "8",
-    };
-
-    const hashedPassword = await hash(password, 10);
-    const usernameExists = await prisma.acc.findFirst({ where: { username } });
-
-    if (usernameExists)
-      return throwError(
-        403,
-
-        "Username sudah digunakan, ganti username anda dengan yang lain."
-      );
+    } = result.data as z.infer<typeof userSchema>;
 
     if (email) {
-      if (!otp) return throwError(403, "Masukkan kode OTP dari email!");
+      if (!otp)
+        return throwError(403, "Masukkan kode OTP yang valid dari email!");
       const findOTP = await prisma.oTP.findFirst({ where: { email } });
       if (!findOTP)
         return throwError(403, "Kamu belum mengirim OTP ke emailmu!");
@@ -76,20 +49,22 @@ export const create = async (
       await prisma.oTP.delete({ where: { id: findOTP.id } });
     }
 
-    // YYYYJKAAA
-    // YYYY = Tahun Masuk Siswa
-    // J = Inisial Nomor Jurusan
-    // K = Kelas
-    // AAA = Nomor Absen Kelas
+    const hashedPassword = await hash(password, 10);
+    const usernameExists = await prisma.acc.findFirst({ where: { username } });
 
-    const id =
-      new Date().getFullYear() +
-      codeJurusan[jurusan] +
-      kelas +
-      absentnum.toString().padStart(3, "0");
+    if (usernameExists)
+      return throwError(
+        403,
+        "Username sudah digunakan, ganti username anda dengan yang lain."
+      );
 
-    console.log(id);
+    const id = generateUserId(jurusan as Jurusan, kelas, absentnum);
+
     if (id.length !== 9) return throwError(500, "Panjang ID bukan 9!");
+    const idExists = await prisma.acc.findFirst({ where: { username } });
+    if (idExists)
+      return throwError(403, "Silahkan periksa kembali nomor absenmu.");
+
     const createAcc = await prisma.acc.create({
       data: {
         id,
@@ -143,10 +118,13 @@ export const update = async (
 ) => {
   try {
     if (!req.payload) return throwError(500, "req.payload undefined!");
-    const { name, email, oldPassword, newPassword } = req.body;
 
-    if (!name) return throwError(403, "Nama tidak boleh kosong!");
-    if (email && !isEmail(email)) return throwError(403, "Email tidak valid!");
+    const result = updateUserSchema.safeParse(req.body);
+
+    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+
+    const { username, name, email, oldPassword, newPassword } =
+      result.data as z.infer<typeof updateUserSchema>;
 
     const { id } = req.payload;
 
@@ -171,7 +149,7 @@ export const update = async (
 
     await prisma.acc.update({
       where: { id },
-      data: { name: name, email, password },
+      data: { username, name, email, password },
     });
 
     const accessToken = generateAccessToken(res, payload);
@@ -191,22 +169,25 @@ export const OTP = async (req: IRequest, res: Response, next: NextFunction) => {
       where: { expiresAt: { lte: new Date(Date.now()) } },
     });
 
+    const emailSchema = z.string().trim().email("Email tidak valid!");
+    const result = emailSchema.safeParse(req.body);
+
+    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+
     const otp = generateOTP();
-    const { email } = req.body;
-    if (!email || !isEmail(email)) return throwError(403, "Email tidak valid!");
-    const trimmedEmail = email.trim();
+    const email = result.data as z.infer<typeof emailSchema>;
 
     const userOTP = await prisma.oTP.findFirst({
-      where: { email: trimmedEmail },
+      where: { email },
     });
 
     if (userOTP)
       return throwError(403, "Kamu sudah mengirimkan OTP sebelumnya!");
 
-    await sendEmail(trimmedEmail, otp, "Verifikasi emailmu sekarang!");
+    await sendEmail(email, otp, "Verifikasi emailmu sekarang!");
     await prisma.oTP.create({
       data: {
-        email: trimmedEmail,
+        email,
         expiresAt: new Date(Date.now() + 1000 * 60 * 5),
         otp,
       },
