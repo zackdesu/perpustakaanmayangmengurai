@@ -32,16 +32,16 @@ CREATE TABLE `User` (
 
 -- CreateTable
 CREATE TABLE `Loan` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `waktuPeminjaman` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `batasPengembalian` DATETIME(3) NOT NULL,
     `waktuKembali` DATETIME(3) NULL,
+    `status` ENUM('DIPINJAM', 'DIKEMBALIKAN', 'HILANG') NOT NULL DEFAULT 'DIPINJAM',
+    `denda` INTEGER NOT NULL DEFAULT 0,
+    `bookCode` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `bookId` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `Loan_id_key`(`id`),
-    UNIQUE INDEX `Loan_userId_key`(`userId`),
-    UNIQUE INDEX `Loan_bookId_key`(`bookId`),
     INDEX `Loan_userId_bookId_idx`(`userId`, `bookId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

@@ -40,13 +40,15 @@ model User {
 }
 
 model Loan {
-  id                String    @id
-  waktuPeminjaman   DateTime  @default(now())
+  id                Int        @id @default(autoincrement())
+  waktuPeminjaman   DateTime   @default(now())
   batasPengembalian DateTime
   waktuKembali      DateTime?
-  dikembalikan      Boolean   @default(false)
-  userId            String    @unique
-  bookId            String    @unique
+  status            Peminjaman @default(DIPINJAM)
+  denda             Int        @default(0)
+  bookCode          String
+  userId            String
+  bookId            String
 
   user Acc  @relation(fields: [userId], references: [id])
   book Book @relation(fields: [bookId], references: [id])
@@ -100,4 +102,10 @@ enum BookType {
 enum Role {
   ADMIN
   MEMBER
+}
+
+enum Peminjaman {
+  DIPINJAM
+  DIKEMBALIKAN
+  HILANG
 }
