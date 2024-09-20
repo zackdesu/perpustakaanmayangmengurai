@@ -41,7 +41,7 @@ export const createBook = async (
     }
     const result = bookSchema.safeParse(req.body);
     console.log(result.error);
-    if (!result.success) throwError(400, "Gagal memvalidasi data buku!");
+    if (!result.success) throw result.error;
 
     const data = result.data as Book;
 
@@ -112,7 +112,7 @@ export const updateBook = async (
 
     const result = bookSchema.safeParse(req.body);
 
-    if (!result.success) throwError(400, "Gagal memvalidasi data buku!");
+    if (!result.success) throw result.error;
 
     const { id, judul, pengarang, ...data } = result.data as Book;
     if (!id) return throwError(500, "Book ID not found!");

@@ -25,7 +25,7 @@ export const create = async (
 
     console.log(result.error);
 
-    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+    if (!result.success) throw result.error;
 
     const {
       username,
@@ -121,7 +121,7 @@ export const update = async (
 
     const result = updateUserSchema.safeParse(req.body);
 
-    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+    if (!result.success) throw result.error;
 
     const { username, name, email, oldPassword, newPassword } =
       result.data as z.infer<typeof updateUserSchema>;
@@ -172,7 +172,7 @@ export const OTP = async (req: IRequest, res: Response, next: NextFunction) => {
     const emailSchema = z.string().trim().email("Email tidak valid!");
     const result = emailSchema.safeParse(req.body);
 
-    if (!result.success) throwError(400, "Gagal memvalidasi data akun!");
+    if (!result.success) throw result.error;
 
     const otp = generateOTP();
     const email = result.data as z.infer<typeof emailSchema>;
