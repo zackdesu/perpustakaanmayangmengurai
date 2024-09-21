@@ -12,7 +12,7 @@ export const authenticate = async (
     const token = req.headers.authorization?.split(" ")[1];
     const secret = process.env.ACCESS_TOKEN_SECRET;
 
-    if (!token) return throwError(404, "Access Token not found!");
+    if (!token) return throwError(401, "Unauthorized Access!");
     if (!secret) return throwError(500, "Access Token Secret not found!");
 
     const user = jwt.verify(token, secret) as Payload;

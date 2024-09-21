@@ -41,11 +41,11 @@ export const create = async (
 
     if (email) {
       if (!otp)
-        return throwError(403, "Masukkan kode OTP yang valid dari email!");
+        return throwError(400, "Masukkan kode OTP yang valid dari email!");
       const findOTP = await prisma.oTP.findFirst({ where: { email } });
       if (!findOTP)
-        return throwError(403, "Kamu belum mengirim OTP ke emailmu!");
-      if (otp != findOTP.otp) return throwError(403, "Kode OTP salah!");
+        return throwError(404, "Kamu belum mengirim OTP ke emailmu!");
+      if (otp != findOTP.otp) return throwError(400, "Kode OTP salah!");
       await prisma.oTP.delete({ where: { id: findOTP.id } });
     }
 
@@ -54,7 +54,7 @@ export const create = async (
 
     if (usernameExists)
       return throwError(
-        403,
+        409,
         "Username sudah digunakan, ganti username anda dengan yang lain."
       );
 
@@ -63,7 +63,7 @@ export const create = async (
     if (id.length !== 9) return throwError(500, "Panjang ID bukan 9!");
     const idExists = await prisma.acc.findFirst({ where: { username } });
     if (idExists)
-      return throwError(403, "Silahkan periksa kembali nomor absenmu.");
+      return throwError(409, "Silahkan periksa kembali nomor absenmu.");
 
     const createAcc = await prisma.acc.create({
       data: {
@@ -105,6 +105,7 @@ export const read = async (
 ) => {
   try {
     if (!req.payload) return throwError(500, "req.payload undefined!");
+    res.set("Cache-Control", "private, max-age=120");
     return res.status(200).json({ user: req.payload });
   } catch (error) {
     next(error);
@@ -135,7 +136,7 @@ export const update = async (
 
     if (oldPassword && newPassword) {
       const checkPassword = compareSync(oldPassword, user.password);
-      if (!checkPassword) return throwError(403, "Old password is wrong!");
+      if (!checkPassword) return throwError(400, "Old password is wrong!");
       password = await hash(newPassword, 10);
     }
 
@@ -182,7 +183,7 @@ export const OTP = async (req: IRequest, res: Response, next: NextFunction) => {
     });
 
     if (userOTP)
-      return throwError(403, "Kamu sudah mengirimkan OTP sebelumnya!");
+      return throwError(429, "Kamu sudah mengirimkan OTP sebelumnya!");
 
     await sendEmail(email, otp, "Verifikasi emailmu sekarang!");
     await prisma.oTP.create({
@@ -210,7 +211,7 @@ export const login = async (
 
     const { username, password } = req.body;
     if (!username || !password)
-      return throwError(403, "Username atau password belum di isi!");
+      return throwError(400, "Username atau password belum di isi!");
 
     const user = await prisma.acc.findFirst({ where: { username } });
 
@@ -218,7 +219,7 @@ export const login = async (
 
     const comparePassword = compareSync(password, user.password);
 
-    if (!comparePassword) return throwError(403, "Password salah!");
+    if (!comparePassword) return throwError(401, "Password salah!");
 
     const payload = {
       id: user.id,
@@ -281,6 +282,7 @@ export const refresh = async (
     };
 
     const accessToken = generateAccessToken(res, payload);
+    res.set("Cache-Control", "private, max-age=240");
 
     return res.status(200).json({ accessToken });
   } catch (error) {
