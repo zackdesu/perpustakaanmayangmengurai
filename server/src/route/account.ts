@@ -15,11 +15,10 @@ const router = Router();
 router.post("/register", create);
 router.post("/otp", OTP);
 router.post("/login", login);
-router.post("/refresh", refresh);
+router.get("/refresh", refresh);
 router.delete("/logout", logout);
 
-router.use(authenticate);
-router.get("/details", read);
-router.patch("/update", update);
+router.get("/details", authenticate, read);
+router.patch("/update", authenticate, update);
 
 export { router as acc };
