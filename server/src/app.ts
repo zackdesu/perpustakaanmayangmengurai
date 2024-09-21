@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { acc } from "./route/account";
 import { book } from "./route/book";
 import { user } from "./route/user";
@@ -41,4 +41,7 @@ app.use("/book", book);
 app.use("/user", user);
 
 app.use(errorHandler);
+app.use("*", (req: Request, res: Response) => {
+  res.status(405).json({ error: "Method Not Allowed" });
+});
 export default app;
