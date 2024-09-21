@@ -13,19 +13,24 @@ import {
 } from "../controller/book";
 import { authenticate } from "../middleware/authHandler";
 
-const router = Router();
+const publicRouter = Router();
+const privateRouter = Router();
 
-router.post("/create", createBook);
-router.get("/read", readAllBook);
-router.get("/read/:id", readBook);
-router.post("", findByTag);
+publicRouter.post("/create", createBook);
+publicRouter.get("/read", readAllBook);
+publicRouter.get("/read/:id", readBook);
+publicRouter.post("/", findByTag);
 
-router.use(authenticate);
-router.patch("/update/:id", updateBook);
-router.get("/list", listPeminjam);
-router.post("/borrow", peminjaman);
-router.patch("/return", pengembalianBuku);
-router.patch("/lost", kehilanganBuku);
-router.delete("/delete", deleteBook);
+privateRouter.use(authenticate);
+privateRouter.patch("/update/:id", updateBook);
+privateRouter.get("/list", listPeminjam);
+privateRouter.post("/borrow", peminjaman);
+privateRouter.patch("/return", pengembalianBuku);
+privateRouter.patch("/lost", kehilanganBuku);
+privateRouter.delete("/delete", deleteBook);
 
-export { router as book };
+const combinatedRouter = Router();
+combinatedRouter.use("/", publicRouter);
+combinatedRouter.use("/", privateRouter);
+
+export { combinatedRouter as book };
