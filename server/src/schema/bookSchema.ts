@@ -32,9 +32,12 @@ const bookSchema = z.object({
   image: z.coerce.string().optional(),
   stock: z.coerce.number(),
   tag: z.coerce.string().optional(),
-  isbn: z.coerce.string().refine((val) => isISBN(val), {
-    message: "ISBN tidak valid!",
-  }),
+  isbn: z.coerce
+    .string()
+    .transform((val) => val.replace(/[^0-9Xx]/g, ""))
+    .refine((val) => isISBN(val), {
+      message: "ISBN tidak valid!",
+    }),
 });
 
 export default bookSchema;
