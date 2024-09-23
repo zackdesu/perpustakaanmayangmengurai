@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 const userSchema = z.object({
-  username: z
+  username: z.coerce
     .string()
     .trim()
     .min(3, "Username harus lebih dari 3 huruf!")
     .max(20, "Username tidak boleh lebih dari 20 huruf!"),
-  name: z.string().min(2, "Nama harus lebih dari 2 huruf!"),
-  email: z.string().email("Email tidak valid!").optional(),
-  password: z.string().min(6, "Password harus lebih dari 6 karakter!"),
+  name: z.coerce.string().min(2, "Nama harus lebih dari 2 huruf!"),
+  email: z.coerce.string().email("Email tidak valid!").optional(),
+  password: z.coerce.string().min(6, "Password harus lebih dari 6 karakter!"),
   otp: z.coerce
     .number()
     .min(2000, "Kode OTP tidak valid!")

@@ -2,10 +2,10 @@ import { z } from "zod";
 import isISBN from "../utils/isbnValidator";
 
 const bookSchema = z.object({
-  id: z.string().optional(),
-  judul: z.string().min(1, "Nama buku wajib ada!"),
-  pengarang: z.string().min(1, "Nama pengarang wajib ada!"),
-  penerbit: z.string().optional(),
+  id: z.coerce.string().optional(),
+  judul: z.coerce.string().min(1, "Nama buku wajib ada!"),
+  pengarang: z.coerce.string().min(1, "Nama pengarang wajib ada!"),
+  penerbit: z.coerce.string().optional(),
   type: z.enum(
     [
       "LITERATUR",
@@ -22,17 +22,17 @@ const bookSchema = z.object({
       errorMap: () => ({ message: "Tipe buku tidak valid!" }),
     }
   ),
-  tahun: z
+  tahun: z.coerce
     .string()
     .min(1, "Tahun tidak valid!")
     .max(4, "Tahun tidak valid!")
     .optional(),
-  website: z.string().url("URL tidak valid!").optional(),
-  email: z.string().email().optional(),
-  image: z.string().optional(),
+  website: z.coerce.string().url("URL tidak valid!").optional(),
+  email: z.coerce.string().email().optional(),
+  image: z.coerce.string().optional(),
   stock: z.coerce.number(),
-  tag: z.string().optional(),
-  isbn: z.string().refine((val) => isISBN(val), {
+  tag: z.coerce.string().optional(),
+  isbn: z.coerce.string().refine((val) => isISBN(val), {
     message: "ISBN tidak valid!",
   }),
 });
