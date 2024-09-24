@@ -23,8 +23,6 @@ export const create = async (
   try {
     const result = userSchema.safeParse(req.body);
 
-    console.log(result.error);
-
     if (!result.success) throw result.error;
 
     const {
