@@ -32,7 +32,7 @@ const userSchema = z.object({
     .number()
     .positive()
     .min(1, "Kelas tidak valid")
-    .max(2, "Kelas tidak valid!")
+    .max(3, "Kelas tidak valid!")
     .default(1),
 });
 
