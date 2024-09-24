@@ -168,13 +168,13 @@ export const OTP = async (req: IRequest, res: Response, next: NextFunction) => {
       where: { expiresAt: { lte: new Date(Date.now()) } },
     });
 
-    const emailSchema = z.string().trim().email("Email tidak valid!");
+    const emailSchema = userSchema.pick({ email: true }).required();
     const result = emailSchema.safeParse(req.body);
 
     if (!result.success) throw result.error;
 
     const otp = generateOTP();
-    const email = result.data as z.infer<typeof emailSchema>;
+    const { email } = result.data as z.infer<typeof emailSchema>;
 
     const userOTP = await prisma.oTP.findFirst({
       where: { email },
