@@ -2,8 +2,8 @@ import { Response } from "express";
 import jwt from "jsonwebtoken";
 import prisma from "./db";
 
-const accessTokenExpires = 1000 * 60 * 5; // 5 m
-const refreshTokenExpires = 1000 * 60 * 60 * 24 * 30; // 30 days
+const accessTokenExpires = "5m";
+const refreshTokenExpires = "30d";
 
 export const generateAccessToken = (res: Response, payload: Payload) => {
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
@@ -26,7 +26,7 @@ export const generateRefreshToken = async (res: Response, id: string) => {
   });
 
   res.cookie("refreshToken", refreshToken, {
-    maxAge: refreshTokenExpires,
+    maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV !== "development",
