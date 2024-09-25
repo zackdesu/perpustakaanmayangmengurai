@@ -122,13 +122,26 @@ export const update = async (
 
     if (!result.success) throw result.error;
 
-    const { username, name, email, oldPassword, newPassword } =
+    const { username, name, email, oldPassword, newPassword, otp } =
       result.data as z.infer<typeof updateUserSchema>;
 
     const { id } = req.payload;
 
     const user = await prisma.acc.findFirst({ where: { id } });
     if (!user) return throwError(500, "User not found! Server error!");
+
+    if (user.email && !email)
+      return throwError(403, "Email yang terdaftar tidak boleh dikosongkan!");
+
+    if (user.email !== email) {
+      if (!otp)
+        return throwError(400, "Masukkan kode OTP yang valid dari email!");
+      const findOTP = await prisma.oTP.findFirst({ where: { email } });
+      if (!findOTP)
+        return throwError(404, "Kamu belum mengirim OTP ke emailmu!");
+      if (otp != findOTP.otp) return throwError(400, "Kode OTP salah!");
+      await prisma.oTP.delete({ where: { id: findOTP.id } });
+    }
 
     let password;
 
@@ -138,18 +151,18 @@ export const update = async (
       password = await hash(newPassword, 10);
     }
 
-    const payload = {
-      id: user.id,
-      username: user.username,
-      name,
-      email,
-      role: user.role,
-    };
-
-    await prisma.acc.update({
+    const updatedUser = await prisma.acc.update({
       where: { id },
       data: { username, name, email, password },
     });
+
+    const payload = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+    };
 
     const accessToken = generateAccessToken(res, payload);
     generateRefreshToken(res, user.id);
