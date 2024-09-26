@@ -12,7 +12,7 @@ POST /auth/register
 
 Request Body:
 
-```json
+```jsonc
 {
   "username": "zackdesu", // min. 3 character length
   "password": "123456", // min. 6 character length
@@ -28,7 +28,7 @@ Request Body:
 
 Response Type:
 
-```json
+```jsonc
 {
   "message": "Akun berhasil dibuat!",
   "user": {
@@ -47,13 +47,13 @@ POST /auth/otp
 
 Request Body:
 
-```json
+```jsonc
 { "email": "zackdesu@email.com" }
 ```
 
 Response Body:
 
-```json
+```jsonc
 { "message": "OTP code sent successfully!" }
 ```
 
@@ -65,7 +65,7 @@ POST /auth/login
 
 Request Body:
 
-```json
+```jsonc
 {
   "username": "zackdesu",
   "password": "123456"
@@ -74,7 +74,7 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 {
   "message": "Selamat datang, zackdesu!",
   "user": {
@@ -100,7 +100,7 @@ GET /auth/refresh
 
 Response Body:
 
-```json
+```jsonc
 { "accessToken": "jwt_access_token" }
 ```
 
@@ -112,7 +112,7 @@ DELETE /auth/logout
 
 Response Body:
 
-```json
+```jsonc
 { "message": "Berhasil logout!" }
 ```
 
@@ -128,7 +128,7 @@ GET /auth/details
 
 Response Body:
 
-```json
+```jsonc
 {
   "user": {
     "id": "202272036",
@@ -152,7 +152,7 @@ PATCH /auth/update
 
 Request Body (optional):
 
-```json
+```jsonc
 {
   "username": "zackdesuuuuu",
   "name": "Wongso Wijoyo",

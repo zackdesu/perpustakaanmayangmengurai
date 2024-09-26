@@ -14,7 +14,7 @@ GET /book/list
 
 Response Body (no query):
 
-```json
+```jsonc
 [
   {
     "id": 1,
@@ -72,7 +72,7 @@ GET /book/list?name=Wongso%20Wijaya
 
 Response Body (w/ query):
 
-```json
+```jsonc
 [
   {
     "id": 1,
@@ -109,7 +109,7 @@ GET /book/borrow
 
 Request Body:
 
-```json
+```jsonc
 {
   "lamaHari": "3",
   "bookId": "1",
@@ -120,7 +120,7 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 {
   "message": "Berhasil meminjamkan buku! Buku sudah bisa diberikan kepada peminjam."
 }
@@ -134,7 +134,7 @@ GET /book/return
 
 Request Body:
 
-```json
+```jsonc
 {
   "bookId": "1",
   "bookCode": "234567"
@@ -143,13 +143,13 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 { "message": "Berhasil mengembalikan buku!" }
 ```
 
 Response Body (if late):
 
-```json
+```jsonc
 { "message": "Terlambat selama 2 hari dan dikenakan denda 2000!" }
 ```
 
@@ -161,7 +161,7 @@ GET /book/lost
 
 Request Body:
 
-```json
+```jsonc
 {
   "bookId": "1",
   "bookCode": "234567"
@@ -170,7 +170,7 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 {
   "message": "Berhasil melaporkan buku yang hilang!"
 }
@@ -184,7 +184,7 @@ GET /book/fine
 
 Request Body:
 
-```json
+```jsonc
 {
   "id": "1",
   "bookCode": "234567",
@@ -194,6 +194,6 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 { "message": "Berhasil membayar denda!" }
 ```

@@ -13,7 +13,7 @@ Optional Query:
 
 Response Body (no query):
 
-```json
+```jsonc
 [
   {
     "id": "1",
@@ -39,7 +39,7 @@ GET /book/read?id=1
 
 Response Body (id):
 
-```json
+```jsonc
 {
   "id": "1",
   "judul": "Gagal Menjadi Manusia",
@@ -62,7 +62,7 @@ GET /book/read?isbn=978-623-00-4556-1
 
 Response Body (isbn):
 
-```json
+```jsonc
 {
   "judul": "Python untuk analisis dan visualisasi data",
   "isbn": "978-623-00-4556-1",
@@ -81,7 +81,7 @@ GET /book/read?id=1&isbn=978-623-00-4556-1
 Response Body (id & isbn):
 `400 Bad Request:`
 
-```json
+```jsonc
 { "message": "Pilih salah satu query yang ingin digunakan!" }
 ```
 
@@ -93,7 +93,7 @@ GET /book/?tag=python
 
 Response Body:
 
-```json
+```jsonc
 {
   "id": "2",
   "judul": "Python untuk analisis dan visualisasi data",
@@ -118,7 +118,7 @@ POST /book/create
 
 Request Body:
 
-```json
+```jsonc
 {
   "judul": "Atomic habits : perubahan kecil yang memberikan hasil luar biasa", // required
   "pengarang": "James Clear", // required
@@ -136,7 +136,7 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 {
   "message": "Berhasil menambahkan buku",
   "data": {
@@ -170,7 +170,7 @@ PATCH /book/update
 
 Request Body:
 
-```json
+```jsonc
 {
   "id": "3",
   "judul": "Atomic Habits : Perubahan Kecil Yang Memberikan Hasil Luar Biasa"
@@ -180,7 +180,7 @@ Request Body:
 
 Response Body:
 
-```json
+```jsonc
 {
   "message": "Berhasil mengubah data buku",
   "book": {
@@ -214,6 +214,6 @@ DELETE /book/delete?id=3
 
 Response Body:
 
-```json
+```jsonc
 { "message": "Buku berhasil di hapus" }
 ```
