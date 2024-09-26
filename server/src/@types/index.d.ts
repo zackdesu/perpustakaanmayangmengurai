@@ -49,26 +49,11 @@ interface Payload {
 }
 
 interface GetISBN {
-  Judul: string?;
-  Penerbit: string?;
-  Pengarang: string?;
-  Tahun: string?;
-  ISBN: string?;
-  Website: string?;
-  Email: string?;
-}
-
-interface Book {
-  id?: string;
   judul?: string;
+  isbn?: string | null;
   pengarang?: string;
   penerbit?: string | null;
   tahun?: string | null;
-  website?: string | null;
   email?: string | null;
-  image?: string | null;
-  stock?: number;
-  tag?: string | null;
-  type?: $Enums.BookType;
-  isbn?: string | null;
+  website?: string | null;
 }

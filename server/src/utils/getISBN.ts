@@ -37,7 +37,7 @@ const getISBN = async (ISBN: string) => {
     tahun,
     email,
     website,
-  } as Book;
+  } as GetISBN;
 };
 
 export default getISBN;
