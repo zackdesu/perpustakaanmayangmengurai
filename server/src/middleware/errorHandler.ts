@@ -13,9 +13,14 @@ const errorHandler = (
   const message =
     statusCode === 500
       ? process.env.NODE_ENV === "development"
-        ? err.message
+        ? (err.errors &&
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            err.errors.map((err: any) => err.message).join(", ")) ||
+          err.message
         : "Internal Server Error!"
-      : err.message || err.errors.forEach((err: unknown) => err);
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (err.errors && err.errors.map((err: any) => err.message).join(", ")) ||
+        err.message;
   console.log(message);
 
   return res.status(statusCode).json({
