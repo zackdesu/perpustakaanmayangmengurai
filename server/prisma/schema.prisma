@@ -47,13 +47,13 @@ model Loan {
   status            Peminjaman @default(DIPINJAM)
   denda             Int        @default(0)
   bookCode          String
-  userId            String
+  accId             String
   bookId            String
 
-  user Acc  @relation(fields: [userId], references: [id])
+  acc  Acc  @relation(fields: [accId], references: [id])
   book Book @relation(fields: [bookId], references: [id])
 
-  @@index([userId, bookId])
+  @@index([accId, bookId])
 }
 
 model Book {

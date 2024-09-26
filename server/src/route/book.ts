@@ -9,26 +9,26 @@ import {
   readBook,
   updateBook,
   deleteBook,
-  readAllBook,
   lunas,
 } from "../controller/book";
 import { authenticate } from "../middleware/authHandler";
+import isAdmin from "../middleware/isAdmin";
 
 const publicRouter = Router();
 const privateRouter = Router();
 
-publicRouter.post("/create", createBook);
-publicRouter.get("/read", readAllBook);
-publicRouter.get("/read/:id", readBook);
+publicRouter.get("/read", readBook);
 publicRouter.post("/", findByTag);
 
-privateRouter.use(authenticate);
-privateRouter.patch("/update/:id", updateBook);
+privateRouter.use(authenticate, isAdmin);
+publicRouter.post("/create", createBook);
+privateRouter.patch("/update", updateBook);
+privateRouter.delete("/delete/:id", deleteBook);
+
 privateRouter.get("/list", listPeminjam);
 privateRouter.post("/borrow", peminjaman);
 privateRouter.patch("/return", pengembalianBuku);
 privateRouter.patch("/lost", kehilanganBuku);
-privateRouter.delete("/delete", deleteBook);
 privateRouter.patch("/fine", lunas);
 
 const combinatedRouter = Router();
