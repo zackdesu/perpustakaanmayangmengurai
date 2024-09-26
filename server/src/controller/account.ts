@@ -103,7 +103,6 @@ export const read = async (
 ) => {
   try {
     if (!req.payload) return throwError(500, "req.payload undefined!");
-    res.set("Cache-Control", "private, max-age=120");
     return res.status(200).json({ user: req.payload });
   } catch (error) {
     next(error);
@@ -293,7 +292,6 @@ export const refresh = async (
     };
 
     const accessToken = generateAccessToken(res, payload);
-    res.set("Cache-Control", "private, max-age=240");
 
     return res.status(200).json({ accessToken });
   } catch (error) {
