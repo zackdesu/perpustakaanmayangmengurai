@@ -1,6 +1,8 @@
 # Account Usage API
 
-`PORT`: default port is 3000 on localhost
+Note:
+
+- Save your token into Local Storage or Session Storage.
 
 #### Register
 
@@ -32,7 +34,7 @@ Response Type:
   "user": {
     "id": 202272036,
     "username": "zackdesu",
-    "email": "zackdesu@email.com" // not exist if email not inputted
+    "email": "zackdesu@email.com" // not exist if email is not inputted
   }
 }
 ```
@@ -79,7 +81,7 @@ Response Body:
     "id": "202272036",
     "username": "zackdesu",
     "name": "Wongso Wijaya",
-    "email": "zackdesu@email.com",
+    "email": "zackdesu@email.com", // not exist if email is not inputted
     "role": "MEMBER"
   },
   "accessToken": "jwt_access_token"
@@ -88,13 +90,13 @@ Response Body:
 
 ### Refresh Token
 
-```http
-GET /auth/refresh
-```
-
 Required Cookies:
 
 - `refreshToken`: gain after logged in
+
+```http
+GET /auth/refresh
+```
 
 Response Body:
 
@@ -132,13 +134,13 @@ Response Body:
     "id": "202272036",
     "username": "zackdesu",
     "name": "Wongso Wijaya",
-    "email": "zackdesu@email.com",
+    "email": "zackdesu@email.com", // not exist if email is not inputted
     "role": "MEMBER"
   }
 }
 ```
 
-### Update User Detail
+### Update User Details
 
 Required headers:
 
@@ -154,19 +156,9 @@ Request Body (optional):
 {
   "username": "zackdesuuuuu",
   "name": "Wongso Wijoyo",
-  "email": "zackdesuuuuu@email.com",
-  "oldPassword": "123456",
-  "newPassword": "654321",
+  "email": "zackdesuuuuu@email.com", // optional
+  "oldPassword": "123456", // required for password changes
+  "newPassword": "654321", // required for password changes
   "otp": "xxxx" // required if email is inputted / changed
 }
 ```
-
-| Status Code | Description                                       | Context/Example                                                                              |
-| :---------- | :------------------------------------------------ | :------------------------------------------------------------------------------------------- |
-| `400`       | Bad Request: Input data not valid or not complete | "Username atau password belum di isi!" atau "Masukkan kode OTP yang valid dari email!"       |
-| `401`       | Unauthorized: Wrong password or token             | "Password salah!"                                                                            |
-| `403`       | Forbidden: Forbidden Access, Token is Exist       | "User have logged in." atau "Refresh Token Invalid!"                                         |
-| `404`       | Not Found                                         | "Pengguna tidak ditemukan!" atau "Kamu belum mengirim OTP ke emailmu!"                       |
-| `409`       | Conflict: Data is exist                           | "Username sudah digunakan, ganti username anda dengan yang lain."                            |
-| `429`       | Too Many Requests                                 | "Kamu sudah mengirimkan OTP sebelumnya!"                                                     |
-| `500`       | Internal Server Error                             | "Refresh Token Secret not found!", "Panjang ID bukan 9!" atau "User not found in find user!" |
