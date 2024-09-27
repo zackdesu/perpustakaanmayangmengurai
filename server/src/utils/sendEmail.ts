@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import { throwError } from "./throwError";
+import HttpError from "./HttpError";
+import logger from "./logger";
 
 const sendEmail = async (
   to: string,
@@ -10,7 +11,8 @@ const sendEmail = async (
   const user = process.env.EMAIL;
   const pass = process.env.PASSWORD;
 
-  if (!user || !pass) return throwError(500, "Email & Password is not found!");
+  if (!user || !pass)
+    throw new HttpError(500, "Email & Password is not found!");
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -28,7 +30,7 @@ const sendEmail = async (
   };
 
   await transporter.sendMail(mailOptions);
-  console.log("Message sent successfully!");
+  logger.info("Message sent successfully!");
 };
 
 export default sendEmail;

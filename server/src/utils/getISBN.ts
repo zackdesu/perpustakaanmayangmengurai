@@ -1,5 +1,5 @@
 import { Book } from "@prisma/client";
-import { throwError } from "./throwError";
+import HttpError from "./HttpError";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = { [key: string]: any };
@@ -13,17 +13,17 @@ const lowercaseKeys = (obj: AnyObject, deep = false) =>
 
 const getISBN = async (ISBN: string) => {
   const url = process.env.BOOK_ISBN_API;
-  if (!url) return throwError(500, "BOOK_ISBN_API not found!");
+  if (!url) throw new HttpError(500, "BOOK_ISBN_API not found!");
   const res = await fetch(url + ISBN);
   const dataJSON: { rows: [GetISBN] | null } = await res.json();
-  if (!dataJSON.rows) return throwError(404, "Buku tidak ditemukan!");
+  if (!dataJSON.rows) throw new HttpError(404, "Buku tidak ditemukan!");
 
   const { judul, isbn, pengarang, penerbit, tahun, email, website } =
     lowercaseKeys(dataJSON.rows[0]) as Book;
 
-  if (!judul) return throwError(404, "Judul tidak ditemukan!");
-  if (!pengarang) return throwError(404, "Pengarang tidak ditemukan!");
-  if (!isbn) return throwError(500, "ISBN tidak ditemukan!");
+  if (!judul) throw new HttpError(404, "Judul tidak ditemukan!");
+  if (!pengarang) throw new HttpError(404, "Pengarang tidak ditemukan!");
+  if (!isbn) throw new HttpError(500, "ISBN tidak ditemukan!");
 
   const pengarangAsli = pengarang.split(";")[0].split(".")[0];
 

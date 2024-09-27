@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import prisma from "../utils/db";
-import { throwError } from "../utils/throwError";
+import HttpError from "../utils/HttpError";
 import { IRequest } from "../@types/express";
 
 export const readUser = async (
@@ -9,13 +9,13 @@ export const readUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.payload) return throwError(500, "req.payload undefined!");
+    if (!req.payload) throw new HttpError(500, "req.payload undefined!");
 
     const { id } = req.payload;
 
     const user = await prisma.user.findFirst({ where: { accId: id } });
 
-    if (!user) return throwError(500, "Registered acc not found user!");
+    if (!user) throw new HttpError(500, "Registered acc not found user!");
 
     res.status(200).json(user);
   } catch (error) {
@@ -29,7 +29,7 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.payload) return throwError(500, "req.payload undefined!");
+    if (!req.payload) throw new HttpError(500, "req.payload undefined!");
 
     const { id } = req.payload;
 
