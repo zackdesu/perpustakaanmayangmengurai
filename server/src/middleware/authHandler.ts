@@ -5,7 +5,7 @@ import { IRequest } from "../@types/express";
 
 export const authenticate = async (
   req: IRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {

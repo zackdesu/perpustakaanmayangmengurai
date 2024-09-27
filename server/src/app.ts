@@ -41,7 +41,7 @@ app.use("/book", book);
 app.use("/user", user);
 
 app.use(errorHandler);
-app.use("*", (req: Request, res: Response) => {
+app.use("*", (_req: Request, res: Response) => {
   res.status(405).json({ error: "Method Not Allowed" });
 });
 export default app;

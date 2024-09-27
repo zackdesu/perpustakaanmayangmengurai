@@ -33,7 +33,6 @@ export const updateUser = async (
 
     const { id } = req.payload;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { username, password, email, name, ...data } = req.body;
 
     await prisma.user.update({ where: { id }, data });

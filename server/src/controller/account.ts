@@ -163,7 +163,7 @@ export const update = async (
       role: updatedUser.role,
     };
 
-    const accessToken = generateAccessToken(res, payload);
+    const accessToken = generateAccessToken(payload);
     generateRefreshToken(res, user.id);
 
     return res
@@ -239,7 +239,7 @@ export const login = async (
       role: user.role,
     };
 
-    const accessToken = generateAccessToken(res, payload);
+    const accessToken = generateAccessToken(payload);
     await generateRefreshToken(res, user.id);
 
     return res.status(200).json({
@@ -291,7 +291,7 @@ export const refresh = async (
       role: user.role,
     };
 
-    const accessToken = generateAccessToken(res, payload);
+    const accessToken = generateAccessToken(payload);
 
     return res.status(200).json({ accessToken });
   } catch (error) {

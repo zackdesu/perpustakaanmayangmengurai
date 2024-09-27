@@ -5,7 +5,7 @@ import prisma from "./db";
 const accessTokenExpires = "5m";
 const refreshTokenExpires = "30d";
 
-export const generateAccessToken = (res: Response, payload: Payload) => {
+export const generateAccessToken = (payload: Payload) => {
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
   if (!accessTokenSecret)
     throw { statusCode: 500, message: "Access Token Secret not found!" };
