@@ -13,19 +13,20 @@ import {
 } from "../controller/book";
 import { authenticate } from "../middleware/authHandler";
 import isAdmin from "../middleware/isAdmin";
+import setCache from "../utils/cache";
 
 const publicRouter = Router();
 const privateRouter = Router();
 
-publicRouter.get("/read", readBook);
-publicRouter.post("/", findByTag);
+publicRouter.get("/read", setCache(60 * 5), readBook);
+publicRouter.get("/", setCache(60 * 2), findByTag);
 
 privateRouter.use(authenticate, isAdmin);
 publicRouter.post("/create", createBook);
 privateRouter.patch("/update", updateBook);
 privateRouter.delete("/delete/:id", deleteBook);
 
-privateRouter.get("/list", listPeminjam);
+privateRouter.get("/list", setCache(60 * 1), listPeminjam);
 privateRouter.post("/borrow", peminjaman);
 privateRouter.patch("/return", pengembalianBuku);
 privateRouter.patch("/lost", kehilanganBuku);
