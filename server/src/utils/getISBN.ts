@@ -1,15 +1,16 @@
 import { Book } from "@prisma/client";
 import HttpError from "./HttpError";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyObject = { [key: string]: any };
+type UnknownObject = { [key: string]: unknown };
 
-const lowercaseKeys = (obj: AnyObject, deep = false) =>
+const lowercaseKeys = (obj: UnknownObject, deep = false) =>
   Object.keys(obj).reduce((acc, key) => {
     acc[key.toLowerCase()] =
-      deep && typeof obj[key] === "object" ? lowercaseKeys(obj[key]) : obj[key];
+      deep && obj[key] !== null && typeof obj[key] === "object"
+        ? lowercaseKeys(obj[key] as UnknownObject, deep)
+        : obj[key];
     return acc;
-  }, {} as AnyObject);
+  }, {} as UnknownObject);
 
 const getISBN = async (ISBN: string) => {
   const url = process.env.BOOK_ISBN_API;
@@ -19,7 +20,7 @@ const getISBN = async (ISBN: string) => {
   if (!dataJSON.rows) throw new HttpError(404, "Buku tidak ditemukan!");
 
   const { judul, isbn, pengarang, penerbit, tahun, email, website } =
-    lowercaseKeys(dataJSON.rows[0]) as Book;
+    lowercaseKeys(dataJSON.rows[0] as unknown as UnknownObject) as Book;
 
   if (!judul) throw new HttpError(404, "Judul tidak ditemukan!");
   if (!pengarang) throw new HttpError(404, "Pengarang tidak ditemukan!");
