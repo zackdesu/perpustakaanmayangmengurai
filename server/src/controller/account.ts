@@ -23,7 +23,7 @@ export const create = async (
   try {
     const result = userSchema.safeParse(req.body);
 
-    if (!result.success) throw new HttpError(404, result.error);
+    if (!result.success) throw new HttpError(400, result.error);
 
     const {
       username,
