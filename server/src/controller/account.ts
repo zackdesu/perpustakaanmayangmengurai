@@ -13,7 +13,7 @@ import { IRequest } from "../@types/express";
 import generateUserId from "../utils/userIdGenerator";
 import userSchema from "../schema/userSchema";
 import { z } from "zod";
-import updateUserSchema from "../schema/updateUserSchema";
+import updateAccUserSchema from "../schema/updateAccUserSchema";
 
 export const create = async (
   req: IRequest<ReqAcc>,
@@ -56,7 +56,7 @@ export const create = async (
         "Username sudah digunakan, ganti username anda dengan yang lain."
       );
 
-    const id = generateUserId(jurusan as Jurusan, kelas, absentnum);
+    const id = generateUserId(jurusan, kelas, absentnum);
 
     if (id.length !== 9) throw new HttpError(500, "Panjang ID bukan 9!");
     const idExists = await prisma.acc.findFirst({ where: { username } });
@@ -69,7 +69,7 @@ export const create = async (
         username,
         name,
         password: hashedPassword,
-        email: email ? email.trim() : null,
+        email,
       },
     });
 
@@ -109,6 +109,29 @@ export const read = async (
   }
 };
 
+export const readUser = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.payload) throw new HttpError(500, "req.payload undefined!");
+
+    const { id } = req.payload;
+
+    const user = await prisma.user.findFirst({
+      where: { accId: id },
+      include: { acc: true },
+    });
+
+    if (!user) throw new HttpError(500, "Registered acc not found user!");
+
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const update = async (
   req: IRequest,
   res: Response,
@@ -117,12 +140,12 @@ export const update = async (
   try {
     if (!req.payload) throw new HttpError(500, "req.payload undefined!");
 
-    const result = updateUserSchema.safeParse(req.body);
+    const result = updateAccUserSchema.safeParse(req.body);
 
     if (!result.success) throw result.error;
 
-    const { username, name, email, oldPassword, newPassword, otp } =
-      result.data as z.infer<typeof updateUserSchema>;
+    const { username, name, email, oldPassword, newPassword, otp, ...data } =
+      result.data as z.infer<typeof updateAccUserSchema>;
 
     const { id } = req.payload;
 
@@ -153,6 +176,11 @@ export const update = async (
     const updatedUser = await prisma.acc.update({
       where: { id },
       data: { username, name, email, password },
+    });
+
+    await prisma.user.update({
+      where: { accId: id },
+      data,
     });
 
     const payload = {
