@@ -26,7 +26,7 @@ model Acc {
 }
 
 model User {
-  id           String    @id @unique @default(uuid())
+  accId        String    @id @unique
   angkatan     Int
   jurusan      String
   kelas        Int
@@ -36,7 +36,6 @@ model User {
   Tempat       String?
   TanggalLahir DateTime?
   acc          Acc?      @relation(fields: [accId], references: [id])
-  accId        String?   @unique
 }
 
 model Loan {
@@ -48,7 +47,7 @@ model Loan {
   denda             Int        @default(0)
   bookCode          String
   accId             String
-  bookId            String
+  bookId            Int
 
   acc  Acc  @relation(fields: [accId], references: [id])
   book Book @relation(fields: [bookId], references: [id])
@@ -57,7 +56,7 @@ model Loan {
 }
 
 model Book {
-  id        String   @id @unique @default(uuid())
+  id        Int      @id @unique @default(autoincrement())
   judul     String
   pengarang String
   penerbit  String?
@@ -73,9 +72,8 @@ model Book {
 }
 
 model Token {
-  id           Int    @id @default(autoincrement())
+  userId       String @id @unique
   refreshToken String
-  userId       String @unique
   user         Acc    @relation(fields: [userId], references: [id])
 }
 
