@@ -22,7 +22,7 @@ publicRouter.get("/read", setCache(60 * 5), readBook);
 publicRouter.get("/", setCache(60 * 2), findByTag);
 
 privateRouter.use(authenticate, isAdmin);
-publicRouter.post("/create", createBook);
+privateRouter.post("/create", createBook);
 privateRouter.patch("/update", updateBook);
 privateRouter.delete("/delete/:id", deleteBook);
 
