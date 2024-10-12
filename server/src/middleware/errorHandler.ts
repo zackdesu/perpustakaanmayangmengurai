@@ -22,7 +22,7 @@ const errorHandler = (
   logger.error(message);
 
   return res.status(statusCode).json({
-    error: message,
+    message,
   });
 };
 
