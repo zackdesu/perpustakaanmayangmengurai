@@ -43,6 +43,9 @@ export const create = async (
       const findOTP = await prisma.oTP.findFirst({ where: { email } });
       if (!findOTP)
         throw new HttpError(404, "Kamu belum mengirim OTP ke emailmu!");
+      if (findOTP.expiresAt < new Date())
+        throw new HttpError(403, "Kode OTP sudah kadaluwarsa");
+
       if (otp != findOTP.otp) throw new HttpError(400, "Kode OTP salah!");
       await prisma.oTP.delete({ where: { id: findOTP.id } });
     }
@@ -147,30 +150,42 @@ export const update = async (
     const { username, name, email, oldPassword, newPassword, otp, ...data } =
       result.data as z.infer<typeof updateAccUserSchema>;
 
+    const usernameExists = await prisma.acc.findFirst({ where: { username } });
+
+    if (usernameExists)
+      throw new HttpError(
+        409,
+        "Username sudah digunakan, ganti username anda dengan yang lain."
+      );
+
     const { id } = req.payload;
 
-    const user = await prisma.acc.findFirst({ where: { id } });
+    const user = await prisma.acc.findFirst({
+      where: { id },
+      omit: { password: false },
+    });
     if (!user) throw new HttpError(500, "User not found! Server error!");
 
     if (user.email && !email)
       throw new HttpError(403, "Email yang terdaftar tidak boleh dikosongkan!");
 
-    if (user.email !== email) {
-      if (!otp)
-        throw new HttpError(400, "Masukkan kode OTP yang valid dari email!");
+    if (email && user.email !== email) {
       const findOTP = await prisma.oTP.findFirst({ where: { email } });
       if (!findOTP)
         throw new HttpError(404, "Kamu belum mengirim OTP ke emailmu!");
+      if (!otp)
+        throw new HttpError(400, "Masukkan kode OTP yang valid dari email!");
       if (otp != findOTP.otp) throw new HttpError(400, "Kode OTP salah!");
       await prisma.oTP.delete({ where: { id: findOTP.id } });
     }
 
-    let password;
+    let password: string | undefined = undefined;
 
     if (oldPassword && newPassword) {
       const checkPassword = compareSync(oldPassword, user.password);
       if (!checkPassword) throw new HttpError(400, "Old password is wrong!");
       password = await hash(newPassword, 10);
+      generateRefreshToken(res, user.id);
     }
 
     const updatedUser = await prisma.acc.update({
@@ -192,7 +207,6 @@ export const update = async (
     };
 
     const accessToken = generateAccessToken(payload);
-    generateRefreshToken(res, user.id);
 
     return res
       .status(200)
@@ -251,7 +265,10 @@ export const login = async (
     if (!username || !password)
       throw new HttpError(400, "Username atau password belum di isi!");
 
-    const user = await prisma.acc.findFirst({ where: { username } });
+    const user = await prisma.acc.findFirst({
+      where: { username },
+      omit: { password: false },
+    });
 
     if (!user) throw new HttpError(404, "Pengguna tidak ditemukan!");
 
