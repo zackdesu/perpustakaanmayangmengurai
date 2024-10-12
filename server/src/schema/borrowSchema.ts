@@ -1,17 +1,14 @@
 import { z } from "zod";
 import bookSchema from "./bookSchema";
+import userSchema from "./userSchema";
 
 const borrowSchema = bookSchema
   .pick({ isbn: true })
+  .merge(userSchema.pick({ username: true }))
   .extend({
-    id: z.coerce.number(),
-    bookId: z.coerce.string().min(1, "ID buku masih kosong!"),
+    bookId: z.coerce.number().min(1, "ID buku masih kosong!"),
     lamaHari: z.coerce.number().min(1, "Batas pengembalian wajib ditetapkan!"),
     bookCode: z.coerce.string().min(1, "Kode Buku masih kosong!"),
-    accId: z.coerce.string().min(1, "ID peminjam wajib ada!"),
-    type: z.enum(["DENDA", "BUKU"], {
-      errorMap: () => ({ message: "Tipe tidak valid!" }),
-    }),
   })
   .partial();
 
