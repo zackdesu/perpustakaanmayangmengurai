@@ -3,7 +3,7 @@ import { IRequest } from "../@types/express";
 import { NextFunction, Response } from "express";
 import logger from "./logger";
 
-const cache = new NodeCache();
+export const cache = new NodeCache();
 
 type CachedResponse =
   | {
