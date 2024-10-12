@@ -1,47 +1,53 @@
-import express, { Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import { acc } from "./route/account";
 import { book } from "./route/book";
-import { user } from "./route/user";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import errorHandler from "./middleware/errorHandler";
+import limiter from "./utils/limiter";
+import HttpError from "./utils/HttpError";
 
-const app = express();
-const origin = process.env.ORIGIN;
+class App {
+  public app: Application;
+  private origin: string;
 
-if (!origin) throw new Error("ORIGIN not found!");
+  constructor() {
+    this.app = express();
+    this.origin = process.env.ORIGIN || "";
+    if (!this.origin) throw new Error("ORIGIN not found!");
 
-app.use(cookieParser(process.env.SECRET));
+    this.setMiddleWare();
+    this.setRoutes();
+    this.setErrorCatcher();
+  }
 
-app.use(helmet());
+  private setMiddleWare() {
+    this.app.use(cookieParser(process.env.SECRET));
+    this.app.use(helmet());
+    this.app.use(limiter());
+    this.app.use(
+      cors({
+        origin: this.origin,
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+      })
+    );
+    this.app.use(express.json());
+  }
 
-app.use(
-  rateLimit({
-    windowMs: 1000 * 60 * 15,
-    limit: 100,
-    message: "Kamu melakukan request terlalu banyak! Silahkan coba lagi nanti.",
-  })
-);
+  private setRoutes() {
+    this.app.use("/auth", acc);
+    this.app.use("/book", book);
+  }
 
-app.use(
-  cors({
-    origin,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+  private setErrorCatcher() {
+    this.app.use("*", (_req: Request, _res: Response, next: NextFunction) => {
+      next(new HttpError(405, "Method not allowed!"));
+    });
+    this.app.use(errorHandler);
+  }
+}
 
-app.use(express.json());
-
-app.use("/auth", acc);
-app.use("/book", book);
-app.use("/user", user);
-
-app.use(errorHandler);
-app.use("*", (_req: Request, res: Response) => {
-  res.status(405).json({ error: "Method Not Allowed" });
-});
-export default app;
+export default new App().app;
