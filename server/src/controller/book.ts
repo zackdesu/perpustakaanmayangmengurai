@@ -6,7 +6,6 @@ import { IRequest } from "../@types/express";
 import { z } from "zod";
 import bookSchema from "../schema/bookSchema";
 import borrowSchema from "../schema/borrowSchema";
-import { Book as PrismaBook } from "@prisma/client";
 import userSchema from "../schema/userSchema";
 
 type Book = z.infer<typeof bookSchema>;
@@ -19,19 +18,19 @@ export const readBook = async (
 ) => {
   try {
     const result = bookSchema
-      .pick({ id: true, isbn: true })
+      .pick({ isbn: true, bookId: true })
       .safeParse(req.query);
 
     if (!result.success) throw result.error;
 
-    const { id, isbn } = result.data;
+    const { bookId, isbn } = result.data;
 
-    if (id && isbn)
+    if (bookId && isbn)
       throw new HttpError(400, "Pilih salah satu query yang ingin digunakan!");
 
-    let book: PrismaBook | PrismaBook[] | GetISBN | HttpError | null = null;
+    let book: unknown;
 
-    if (id) book = await prisma.book.findFirst({ where: { id } });
+    if (bookId) book = await prisma.book.findFirst({ where: { bookId } });
     else if (isbn)
       book =
         (await prisma.book.findFirst({
@@ -46,7 +45,18 @@ export const readBook = async (
             website: true,
           },
         })) || (await getISBN(isbn));
-    else book = await prisma.book.findMany();
+    else
+      book = await prisma.book.findMany({
+        select: {
+          judul: true,
+          isbn: true,
+          pengarang: true,
+          penerbit: true,
+          tahun: true,
+          email: true,
+          website: true,
+        },
+      });
 
     if (!book) throw new HttpError(404, "Buku tidak ditemukan!");
     return res.status(200).json(book);
@@ -65,7 +75,7 @@ export const findByTag = async (
     if (typeof tag !== "string") throw new HttpError(500, "Tag harus string!");
     const book = await prisma.book.findMany({
       where: { OR: [{ judul: { contains: tag } }, { tag: { contains: tag } }] },
-      select: { id: true, image: true, judul: true, stock: true },
+      select: { bookId: true, image: true, judul: true, stock: true },
     });
 
     return res.json(book);
@@ -84,11 +94,11 @@ export const createBook = async (
     if (!result.success) throw result.error;
     const data = result.data;
 
-    const findISBN = await prisma.book.findFirst({
-      where: { isbn: data.isbn },
+    const findBook = await prisma.book.findFirst({
+      where: { OR: [{ isbn: data.isbn }, { judul: data.judul }] },
     });
 
-    if (findISBN) throw new HttpError(409, "Buku sudah ada di dalam database!");
+    if (findBook) throw new HttpError(409, "Buku sudah ada di dalam database!");
 
     const create = await prisma.book.create({ data });
     return res
@@ -105,13 +115,35 @@ export const updateBook = async (
   next: NextFunction
 ) => {
   try {
-    const result = bookSchema.partial().safeParse(req.body);
+    const shouldOmitType = !(req.body as { type?: string }).type;
+
+    const schemaToUse = shouldOmitType
+      ? bookSchema.omit({ bookId: true, type: true })
+      : bookSchema.omit({ bookId: true });
+
+    const result = schemaToUse
+      .partial()
+      .merge(bookSchema.pick({ bookId: true }).required())
+      .safeParse(req.body);
+
     if (!result.success) throw result.error;
 
-    const { id, ...data } = result.data;
-    if (!id) throw new HttpError(500, "Book ID not found!");
+    const { bookId, ...data } = result.data;
 
-    const book = await prisma.book.update({ where: { id }, data });
+    const findBook = await prisma.book.findFirst({ where: { bookId } });
+    if (!findBook) throw new HttpError(404, "Buku tidak ditemukan!");
+
+    const isTitleExist = await prisma.book.findFirst({
+      where: { judul: data.judul },
+    });
+
+    if (isTitleExist)
+      throw new HttpError(403, "Judul sudah tersedia di dalam database!");
+
+    const book = await prisma.book.update({
+      where: { bookId: findBook.bookId },
+      data,
+    });
     return res
       .status(200)
       .json({ message: "Berhasil mengubah data buku", book });
@@ -126,8 +158,10 @@ export const deleteBook = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-    const book = await prisma.book.findFirst({ where: { id } });
+    const result = bookSchema.pick({ bookId: true }).safeParse(req.params);
+    if (!result.success) throw new HttpError(403, result.error);
+    const { bookId } = result.data;
+    const book = await prisma.book.findFirst({ where: { bookId } });
 
     if (!book) throw new HttpError(404, "Buku tidak ditemukan!");
 
@@ -171,6 +205,8 @@ export const listPeminjam = async (
       },
     });
 
+    if (!data) throw new HttpError(404, "Peminjam belum ada!");
+
     return res.status(200).json(data);
   } catch (error) {
     next(error);
@@ -184,31 +220,31 @@ export const peminjaman = async (
 ) => {
   try {
     const result = borrowSchema
-      .omit({ id: true, isbn: true, type: true })
+      .omit({ isbn: true })
       .required()
       .safeParse(req.body);
 
     if (!result.success) throw result.error;
 
-    const { lamaHari, bookId, accId, bookCode } = result.data;
+    const { lamaHari, bookId, username, bookCode } = result.data;
 
     const cariBuku = await prisma.book.findFirst({
-      where: { id: bookId },
+      where: { bookId },
     });
 
     if (!cariBuku) throw new HttpError(404, "Buku tidak ditemukan");
     if (cariBuku.stock === 0) throw new HttpError(404, "Stok buku habis!");
     const cariUser = await prisma.acc.findFirst({
-      where: { id: accId },
+      where: { username },
     });
 
     if (!cariUser) throw new HttpError(404, "User tidak ditemukan");
 
     const pinjamanSama = await prisma.loan.findFirst({
       where: {
-        accId: accId,
-        bookId: bookId,
+        id: bookId,
         status: "DIPINJAM",
+        acc: { username },
       },
       include: { acc: true },
     });
@@ -221,17 +257,14 @@ export const peminjaman = async (
     }
 
     const isBookLost = await prisma.loan.findFirst({
-      where: { accId, OR: [{ denda: { gt: 0 } }, { status: "HILANG" }] },
+      where: {
+        acc: { username },
+        OR: [{ denda: { gt: 0 } }, { status: "HILANG" }],
+      },
       include: { acc: true, book: true },
     });
 
     if (isBookLost) {
-      if (!isBookLost.book.id)
-        throw new HttpError(
-          500,
-          "ID buku yang hilang tidak ditemukan, apakah bukunya dihapus?"
-        );
-
       if (isBookLost.status === "HILANG")
         throw new HttpError(
           403,
@@ -244,20 +277,25 @@ export const peminjaman = async (
           `${isBookLost.acc.name} belum membayar denda sebanyak ${isBookLost.denda}!`
         );
     }
-    await prisma.book.update({
-      where: { id: cariBuku.id },
-      data: { stock: { decrement: 1 } },
-    });
 
     const batasPengembalian = new Date();
     batasPengembalian.setDate(batasPengembalian.getDate() + lamaHari);
     batasPengembalian.setHours(23, 59, 59, 999);
 
+    const findUsernameId = await prisma.acc.findUnique({ where: { username } });
+
+    if (!findUsernameId) throw new HttpError(404, "Username tidak ditemukan!");
+
+    await prisma.book.update({
+      where: { bookId: cariBuku.bookId },
+      data: { stock: { decrement: 1 } },
+    });
+
     await prisma.loan.create({
       data: {
         bookCode,
         bookId,
-        accId,
+        accId: findUsernameId.id,
         batasPengembalian,
       },
     });
@@ -278,28 +316,22 @@ export const pengembalianBuku = async (
 ) => {
   try {
     const result = borrowSchema
-      .pick({ bookCode: true, bookId: true })
+      .pick({ bookCode: true, username: true })
       .required()
       .safeParse(req.body);
 
     if (!result.success) throw result.error;
 
-    const { bookCode, bookId } = result.data;
-
-    const cariBuku = await prisma.book.findFirst({
-      where: { id: bookId },
-    });
-
-    if (!cariBuku)
-      throw new HttpError(500, "Buku dipinjam, tapi tidak ada di database!");
+    const { bookCode, username } = result.data;
 
     const bukuPinjaman = await prisma.loan.findFirst({
-      where: { bookCode, status: "DIPINJAM" },
+      where: { bookCode, status: "DIPINJAM", acc: { username } },
       include: { acc: true },
     });
 
     if (!bukuPinjaman)
       throw new HttpError(404, "Buku pinjaman tidak ditemukan!");
+
     const sekarang = new Date();
 
     let denda = 0;
@@ -315,7 +347,7 @@ export const pengembalianBuku = async (
     }
 
     await prisma.book.update({
-      where: { id: bookId },
+      where: { bookId: bukuPinjaman.bookId },
       data: { stock: { increment: 1 } },
     });
 
@@ -334,6 +366,8 @@ export const pengembalianBuku = async (
             denda / biayaDenda
           } hari dan dikenakan denda ${denda}!`
         : `Berhasil mengembalikan buku!`,
+      denda,
+      durasi: denda / biayaDenda,
     });
   } catch (error) {
     next(error);
@@ -347,26 +381,16 @@ export const kehilanganBuku = async (
 ) => {
   try {
     const result = borrowSchema
-      .pick({ bookCode: true, bookId: true })
+      .pick({ bookCode: true, username: true })
       .required()
       .safeParse(req.body);
 
     if (!result.success) throw result.error;
 
-    const { bookCode, bookId } = result.data;
-
-    const cariBuku = await prisma.book.findFirst({
-      where: { id: bookId },
-    });
-
-    if (!cariBuku)
-      throw new HttpError(
-        500,
-        "Buku sudah dipinjam, apakah terhapus? Check Database"
-      );
+    const { bookCode, username } = result.data;
 
     const bukuPinjaman = await prisma.loan.findFirst({
-      where: { bookCode, status: "DIPINJAM" },
+      where: { bookCode, status: "DIPINJAM", acc: { username } },
     });
 
     if (!bukuPinjaman)
@@ -392,37 +416,38 @@ export const lunas = async (
 ) => {
   try {
     const result = borrowSchema
-      .pick({ bookId: true, id: true, type: true })
+      .pick({ username: true })
       .required()
       .safeParse(req.body);
 
     if (!result.success) throw result.error;
 
-    const { bookId, id, type } = result.data;
+    const { username } = result.data;
 
-    const book = await prisma.book.findFirst({
-      where: { id: bookId },
+    const findLoan = await prisma.loan.findFirst({
+      where: { acc: { username }, denda: { gt: 0 }, status: "HILANG" },
     });
 
-    if (!book) throw new HttpError(404, "Buku tidak ditemukan di database!");
+    if (!findLoan) throw new HttpError(404, "Peminjaman tidak ditemukan!");
 
-    if (type === "BUKU")
+    let message: string | undefined;
+
+    if (findLoan.denda > 0) {
       await prisma.loan.update({
-        where: { id },
-        data: { status: "DIKEMBALIKAN" },
-      });
-    else if (type === "DENDA")
-      await prisma.loan.update({
-        where: { id },
+        where: { id: findLoan.id },
         data: { denda: 0 },
       });
-    else throw new HttpError(403, "Tipe pelunasan tidak valid!");
+      message = "Berhasil membayar denda!";
+    } else if (findLoan.status === "HILANG") {
+      message = "Berhasil mengembalikan buku yang hilang!";
 
-    return res.status(200).json({
-      message: `Berhasil ${
-        type === "BUKU" ? "mengembalikan buku!" : "membayar denda!"
-      }`,
-    });
+      await prisma.loan.update({
+        where: { id: findLoan.id },
+        data: { status: "DIKEMBALIKAN" },
+      });
+    } else throw new HttpError(500, "findLoan error.");
+
+    return res.status(200).json(message);
   } catch (error) {
     next(error);
   }
