@@ -2,7 +2,7 @@ import { z } from "zod";
 import isISBN from "../utils/isbnValidator";
 
 const bookSchema = z.object({
-  id: z.coerce.string().optional(),
+  bookId: z.coerce.number().min(1, "ID wajib di isi!").optional(),
   judul: z.coerce.string().min(1, "Nama buku wajib ada!"),
   pengarang: z.coerce.string().min(1, "Nama pengarang wajib ada!"),
   penerbit: z.coerce.string().optional(),
