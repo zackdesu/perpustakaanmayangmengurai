@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -50,13 +51,13 @@ model Loan {
   bookId            Int
 
   acc  Acc  @relation(fields: [accId], references: [id])
-  book Book @relation(fields: [bookId], references: [id])
+  book Book @relation(fields: [bookId], references: [bookId])
 
   @@index([accId, bookId])
 }
 
 model Book {
-  id        Int      @id @unique @default(autoincrement())
+  bookId    Int      @id @unique @default(autoincrement())
   judul     String
   pengarang String
   penerbit  String?
