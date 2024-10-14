@@ -239,7 +239,7 @@ describe("update book", () => {
       .send({ bookId: 1, judul: sampleBook.judul })
       .set("Authorization", "Bearer abcdefg");
 
-    expect(response.statusCode).toBe(201);
+    expect(response.statusCode).toBe(200);
   });
 });
 
