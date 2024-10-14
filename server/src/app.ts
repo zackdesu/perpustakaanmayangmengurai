@@ -15,7 +15,6 @@ class App {
   constructor() {
     this.app = express();
     this.origin = process.env.ORIGIN || "";
-    if (!this.origin) throw new Error("ORIGIN not found!");
 
     this.setMiddleWare();
     this.setRoutes();
