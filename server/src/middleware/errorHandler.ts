@@ -1,18 +1,28 @@
-import { NextFunction } from "express";
-import { Request, Response } from "../@types/reqnres";
+import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
+import logger from "../utils/logger";
+import HttpError from "../utils/HttpError";
 const errorHandler = (
-  err: {statusCode: number, message: string},
-  req: Request,
+  err: unknown,
+  _req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ) => {
-  const statusCode = err.statusCode || 500;
+  let statusCode = 500;
+  let message = "Internal Server Error";
 
-  const message = err.message || "Terjadi kesalahan di server";
+  if (err instanceof ZodError) {
+    statusCode = 400;
+    message = err.message;
+  } else if (err instanceof HttpError) {
+    statusCode = err.statusCode;
+    message = err.message;
+  }
 
-  res.status(statusCode).json({
-    error: message,
+  logger.error(message);
+
+  return res.status(statusCode).json({
+    message,
   });
 };
 

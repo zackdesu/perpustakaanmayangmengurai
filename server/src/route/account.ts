@@ -1,14 +1,32 @@
 import { Router } from "express";
-import { OTP, create, read, update } from "../controller/account";
-import errorHandler from "../middleware/errorHandler";
-import { login, logout, refresh } from "../controller/logAcc";
+import {
+  OTP,
+  create,
+  login,
+  logout,
+  read,
+  readUser,
+  refresh,
+  update,
+} from "../controller/account";
+import { authenticate } from "../middleware/authHandler";
+import setCache from "../utils/cache";
+import limiter from "../utils/limiter";
 
 const router = Router();
 
-router.route("/acc").post(create).get(read).put(update).options(OTP);
-router.post("/login", login);
-router.route("/refresh").get(refresh);
+router.post(
+  "/login",
+  limiter(10, "Kamu melakukan login terlalu banyak! Silahkan coba lagi nanti."),
+  login
+);
+router.post("/register", create);
+router.post("/otp", OTP);
+router.get("/refresh", refresh);
 router.delete("/logout", logout);
-router.use(errorHandler);
 
-export { router };
+router.get("/info", authenticate, setCache(60 * 1), readUser);
+router.get("/details", authenticate, read);
+router.patch("/update", authenticate, update);
+
+export { router as acc };

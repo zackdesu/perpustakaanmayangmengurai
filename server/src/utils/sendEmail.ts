@@ -1,38 +1,36 @@
 import nodemailer from "nodemailer";
-import { throwError } from "./throwError";
+import HttpError from "./HttpError";
+import logger from "./logger";
 
 const sendEmail = async (
-  email: string,
+  to: string,
   otp: number,
-  subject = "Atur ulang kata sandi"
+  subject = "Atur ulang kata sandi",
+  text = `Code OTP mu adalah ${otp}`
 ) => {
-  try {
-    const user = process.env.EMAIL;
-    const pass = process.env.PASSWORD;
+  const user = process.env.EMAIL;
+  const pass = process.env.PASSWORD;
 
-    if (!user || !pass)
-      return throwError(500, "Email & Password is not found!");
+  if (!user || !pass)
+    throw new HttpError(500, "Email & Password is not found!");
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user,
-        pass,
-      },
-    });
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user,
+      pass,
+    },
+  });
 
-    const mailOptions = {
-      from: `Perpustakaan Mayang Mengurai <${user}>`,
-      to: email,
-      subject,
-      text: `Code OTP mu adalah ${otp}`,
-    };
+  const mailOptions = {
+    from: `Perpustakaan Mayang Mengurai <${user}>`,
+    to,
+    subject,
+    text,
+  };
 
-    await transporter.sendMail(mailOptions);
-    console.log("Message sent successfully!");
-  } catch (error) {
-    console.log(error);
-  }
+  await transporter.sendMail(mailOptions);
+  logger.info("Message sent successfully!");
 };
 
 export default sendEmail;

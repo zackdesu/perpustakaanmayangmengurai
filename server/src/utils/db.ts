@@ -1,7 +1,32 @@
 import { PrismaClient } from "@prisma/client";
+import logger from "./logger";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    omit: {
+      acc: {
+        password: true,
+      },
+    },
+    log: [
+      {
+        emit: "event",
+        level: "query",
+      },
+      {
+        emit: "event",
+        level: "error",
+      },
+      {
+        emit: "event",
+        level: "info",
+      },
+      {
+        emit: "event",
+        level: "warn",
+      },
+    ],
+  });
 };
 
 declare const globalThis: {
@@ -9,6 +34,11 @@ declare const globalThis: {
 } & typeof global;
 
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+prisma.$on("error", (e) => logger.error(e));
+prisma.$on("warn", (e) => logger.warn(e));
+prisma.$on("info", (e) => logger.info(e));
+prisma.$on("query", (e) => logger.debug(e));
 
 export default prisma;
 

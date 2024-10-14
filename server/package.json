@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --env-file .env -T ./src/server.ts"
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "test": "dotenv -e .env.example -- jest -i",
+    "dev": "ts-node-dev --env-file .env.development -T ./src/server.ts"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   },
   "keywords": [],
   "author": "",
@@ -13,27 +21,42 @@
     "@prisma/client": "^5.19.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "dotenv-cli": "^7.4.2",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.14"
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.9.14",
+    "winston": "^3.14.2",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-typescript": "^7.24.7",
     "@eslint/js": "^9.9.1",
+    "@jest/globals": "^29.7.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/csurf": "^1.11.5",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.5.1",
     "@types/nodemailer": "^6.4.15",
-    "@types/validator": "^13.12.1",
+    "@types/supertest": "^6.0.2",
+    "babel-jest": "^29.7.0",
     "eslint": "^9.9.1",
     "globals": "^15.9.0",
+    "jest": "^29.7.0",
     "prisma": "^5.19.0",
+    "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.2",
-    "typescript-eslint": "^8.3.0",
-    "validator": "^13.12.0"
+    "typescript-eslint": "^8.3.0"
   }
 }

@@ -1,0 +1,164 @@
+# Account Usage API
+
+Note:
+
+- Save your token into Local Storage or Session Storage.
+
+#### Register
+
+```http
+POST /auth/register
+```
+
+Request Body:
+
+```jsonc
+{
+  "username": "zackdesu", // min. 3 character length
+  "password": "123456", // min. 6 character length
+  "name": "Wongso Wijaya", // min. 2 character length
+  "email": "zackdesu@email.com", // optional
+  "otp": "xxxx", // only required when email is inputted
+  "absentnum": "36", // range 1-40
+  "angkatan": "12", // range 10-12
+  "jurusan": "KUL", // only accept ["AKL", "PN", "MPLB", "TKJ", "BSN", "KUL", "ULP"]
+  "kelas": "2" // max. 3
+}
+```
+
+Response Type:
+
+```jsonc
+{
+  "message": "Akun berhasil dibuat!",
+  "user": {
+    "id": 202272036,
+    "username": "zackdesu",
+    "email": "zackdesu@email.com" // not exist if email is not inputted
+  }
+}
+```
+
+### OTP code
+
+```http
+POST /auth/otp
+```
+
+Request Body:
+
+```jsonc
+{ "email": "zackdesu@email.com" }
+```
+
+Response Body:
+
+```jsonc
+{ "message": "OTP code sent successfully!" }
+```
+
+### Log in
+
+```http
+POST /auth/login
+```
+
+Request Body:
+
+```jsonc
+{
+  "username": "zackdesu",
+  "password": "123456"
+}
+```
+
+Response Body:
+
+```jsonc
+{
+  "message": "Selamat datang, zackdesu!",
+  "user": {
+    "id": "202272036",
+    "username": "zackdesu",
+    "name": "Wongso Wijaya",
+    "email": "zackdesu@email.com", // not exist if email is not inputted
+    "role": "MEMBER"
+  },
+  "accessToken": "jwt_access_token"
+}
+```
+
+### Refresh Token
+
+Required Cookies:
+
+- `refreshToken`: gain after logged in
+
+```http
+GET /auth/refresh
+```
+
+Response Body:
+
+```jsonc
+{ "accessToken": "jwt_access_token" }
+```
+
+### Log out
+
+```http
+DELETE /auth/logout
+```
+
+Response Body:
+
+```jsonc
+{ "message": "Berhasil logout!" }
+```
+
+### User Detail
+
+Required headers:
+
+- `Authorization`: access token
+
+```http
+GET /auth/details
+```
+
+Response Body:
+
+```jsonc
+{
+  "user": {
+    "id": "202272036",
+    "username": "zackdesu",
+    "name": "Wongso Wijaya",
+    "email": "zackdesu@email.com", // not exist if email is not inputted
+    "role": "MEMBER"
+  }
+}
+```
+
+### Update User Details
+
+Required headers:
+
+- `Authorization`: access token
+
+```http
+PATCH /auth/update
+```
+
+Request Body (optional):
+
+```jsonc
+{
+  "username": "zackdesuuuuu",
+  "name": "Wongso Wijoyo",
+  "email": "zackdesuuuuu@email.com", // optional
+  "oldPassword": "123456", // required for password changes
+  "newPassword": "654321", // required for password changes
+  "otp": "xxxx" // required if email is inputted / changed
+}
+```

@@ -1,7 +1,7 @@
 import app from "./app";
+import logger from "./utils/logger";
 
 const PORT = process.env.PORT || 3000;
-console.log(PORT);
 app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
+  logger.info(`http://localhost:${PORT}`);
 });
