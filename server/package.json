@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "dev": "ts-node-dev --env-file .env -T ./src/server.ts"
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "test": "dotenv -e .env.example -- jest -i",
+    "dev": "ts-node-dev --env-file .env.development -T ./src/server.ts"
   },
   "jest": {
     "transform": {
@@ -20,7 +22,7 @@
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
